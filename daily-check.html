@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Security Docs</title>
+<style>
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", "Yu Gothic", sans-serif; background: #f5f7fa; color: #333; line-height: 1.7; }
+.header { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); color: white; padding: 24px 20px; text-align: center; }
+.header h1 { font-size: 1.6em; margin-bottom: 6px; }
+.header p { opacity: 0.8; font-size: 0.9em; }
+.tabs { display: flex; background: #1a1a2e; overflow-x: auto; scrollbar-width: thin; scrollbar-color: #3949ab #1a1a2e; }
+.tabs::-webkit-scrollbar { height: 4px; }
+.tabs::-webkit-scrollbar-track { background: #1a1a2e; }
+.tabs::-webkit-scrollbar-thumb { background: #3949ab; border-radius: 2px; }
+.tab-link { flex: none; padding: 14px 16px; color: rgba(255,255,255,0.7); border: none; background: none; cursor: pointer; font-size: 0.82em; font-weight: 600; white-space: nowrap; border-bottom: 3px solid transparent; transition: all 0.2s;  text-decoration: none; display: inline-flex; align-items: center; }
+.tab-link:hover { color: white; background: rgba(255,255,255,0.1); }
+.tab-link.active { color: #64b5f6; border-bottom-color: #64b5f6; background: rgba(100,181,246,0.1); }
+.tab-content { display: block; }
+.content { max-width: 900px; margin: 0 auto; padding: 30px 20px; }
+h1 { font-size: 1.8em; color: #1a237e; margin: 30px 0 15px; padding-bottom: 10px; border-bottom: 3px solid #1a237e; }
+h2 { font-size: 1.4em; color: #283593; margin: 25px 0 12px; padding: 10px 15px; background: linear-gradient(to right, #e8eaf6, transparent); border-left: 4px solid #3949ab; border-radius: 4px; }
+h3 { font-size: 1.15em; color: #3949ab; margin: 20px 0 10px; }
+h4 { font-size: 1em; color: #5c6bc0; margin: 15px 0 8px; }
+p { margin: 10px 0; }
+ul, ol { margin: 10px 0 10px 25px; }
+li { margin: 5px 0; }
+table { width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 0.9em; overflow-x: auto; display: block; }
+th { background: #283593; color: white; padding: 12px; text-align: left; }
+td { padding: 10px 12px; border-bottom: 1px solid #e0e0e0; vertical-align: top; }
+tr:nth-child(even) { background: #f8f9ff; }
+tr:hover { background: #e8eaf6; }
+code { background: #f0f0f0; padding: 2px 6px; border-radius: 3px; font-family: "Courier New", monospace; font-size: 0.88em; color: #d32f2f; }
+pre { background: #1e1e2e; color: #cdd6f4; padding: 20px; border-radius: 8px; overflow-x: auto; margin: 15px 0; line-height: 1.6; }
+pre code { background: none; color: inherit; padding: 0; font-size: 0.9em; }
+blockquote { border-left: 4px solid #7986cb; padding: 12px 20px; background: #f3f4ff; margin: 15px 0; border-radius: 0 8px 8px 0; color: #444; }
+blockquote p { margin: 6px 0; }
+hr { border: none; border-top: 2px solid #e0e0e0; margin: 30px 0; }
+strong { color: #1a237e; }
+a { color: #3949ab; }
+.footer { text-align: center; padding: 16px; color: rgba(255,255,255,0.5); background: #1a1a2e; margin-top: 40px; font-size: 0.8em; }
+.literacy-quiz { background: #fff; border-bottom: 1px solid #dfe3f0; box-shadow: 0 2px 10px rgba(26,35,126,0.08); }
+.literacy-quiz-inner { max-width: 900px; margin: 0 auto; padding: 14px 20px; }
+.literacy-quiz-label { color: #5c6bc0; font-size: 0.78em; font-weight: 700; letter-spacing: 0; margin-bottom: 4px; }
+.literacy-quiz-question { color: #1a237e; font-weight: 700; margin: 0; }
+.literacy-quiz-answer { color: #444; margin: 6px 0 0; font-size: 0.92em;  display: none; }
+.literacy-quiz-answer strong { color: #2e7d32; }
+.quick-links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.quick-link { display: inline-flex; align-items: center; padding: 7px 12px; border: 1px solid #3949ab; border-radius: 6px; color: #3949ab; background: #fff; font-size: 0.86em; font-weight: 700; text-decoration: none; }
+.quick-link:hover { background: #e8eaf6; }
+
+.quiz-answer-button { margin-top: 8px; padding: 7px 12px; border: 1px solid #3949ab; border-radius: 6px; background: #3949ab; color: #fff; font-weight: 700; cursor: pointer; }
+.quiz-answer-button:hover { background: #283593; }
+
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>🛡️ AIエージェント セキュリティドキュメント</h1>
+  <p>AI導入・開発時のセキュリティガイド集 | 2026年版</p>
+</div>
+<div class="tabs">
+  <a class="tab-link" href="security-docs-standalone.html">📋 開発ガイド</a>
+  <a class="tab-link" href="threats.html">⚠️ 脅威一覧</a>
+  <a class="tab-link" href="release-check.html">✅ リリース前チェック</a>
+  <a class="tab-link" href="claude-md.html">📁 CLAUDE.md設定</a>
+  <a class="tab-link" href="visibility.html">🔐 中級編：誰が何を見るか</a>
+  <a class="tab-link" href="vpn.html">🌐 VPN解説</a>
+  <a class="tab-link" href="public-pc.html">🏙️ 社外でのPC利用</a>
+  <a class="tab-link" href="password-auth.html">🔑 パスワード・認証</a>
+  <a class="tab-link active" href="daily-check.html">✅ 日常チェック</a>
+  <a class="tab-link" href="glossary.html">🧠 用語集・会話術</a>
+</div>
+
+<div class="tab-content" id="tab8"><div class="content"><h1 id="daily-wifi-checklist">日常チェックリスト</h1>
+<h2>外出先Wi-Fi・社外作業で最初に見る項目</h2>
+<p><strong>目的</strong>：細かい攻撃名を覚える前に、毎回の接続・作業開始時に見るべき確認項目です。</p>
+<hr />
+<h2>外出先Wi-Fi 日常チェックリスト</h2>
+<pre><code>接続前：
+  □ 店員・施設案内・公式掲示で「正しいWi-Fi名（SSID）」を確認した
+  □ 似た名前のWi-Fiが複数ないか確認した（例：Airport_WiFi / Airport_Free_WiFi）
+  □ パスワードなし・利用規約だけのWi-Fiで重要作業をしない
+  □ 迷ったらフリーWi-Fiではなくスマホのテザリングを使う
+
+接続時：
+  □ 「自動的に接続する」をOFFにしてから接続した
+  □ ログイン画面で、SNS・Google・Microsoft等のID/パスワードを入力しない
+  □ 接続後すぐVPNをONにし、VPN接続を確認してから作業する
+
+利用後：
+  □ 使い終わったWi-Fiを「このネットワークを削除」した
+  □ 空港・ホテル・カフェのWi-Fiを保存したままにしていない
+  □ 機密作業・送金・管理画面ログインは可能なら社内回線かテザリングで行う
+</code></pre>
+<hr />
+<h2>社外作業の開始前チェック</h2>
+<pre><code>□ 壁を背にした席を選ぶ
+□ プライバシーフィルターを使う
+□ パスワード・APIキー入力前に周囲を確認する
+□ Bluetoothは不要ならOFF
+□ 離席時は必ずロックする（Windows: Win+L / Mac: Cmd+Ctrl+Q）
+□ 拾ったUSB・知らないUSBケーブルは使わない
+□ 公共USB充電ではなくACアダプタかUSB Data Blockerを使う
+</code></pre>
+<hr />
+<blockquote>
+<p><strong>一言まとめ：</strong> 正しいWi-Fi名を確認する、自動接続を切る、迷ったらテザリング。この3つだけでも外出先リスクは大きく下げられます。</p>
+</blockquote>
+</div></div>
+<div class="footer">
+  <p>AI&#x30A8;&#x30FC;&#x30B8;&#x30A7;&#x30F3;&#x30C8; &#x30BB;&#x30AD;&#x30E5;&#x30EA;&#x30C6;&#x30A3;&#x30C9;&#x30AD;&#x30E5;&#x30E1;&#x30F3;&#x30C8; v4.0 | 2026&#x5E74;&#x7248;</p>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('h2').forEach(function(h) {
+    if (h.textContent.includes('\u7d50\u8ad6')) {
+      h.style.background = 'linear-gradient(to right, #e8f5e9, transparent)';
+      h.style.borderLeftColor = '#43a047';
+      h.style.color = '#2e7d32';
+    }
+  });
+});
+</script>
+</body>
+</html>
