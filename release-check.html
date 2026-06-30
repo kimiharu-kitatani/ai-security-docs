@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Security Docs</title>
+<style>
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", "Yu Gothic", sans-serif; background: #f5f7fa; color: #333; line-height: 1.7; }
+.header { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); color: white; padding: 24px 20px; text-align: center; }
+.header h1 { font-size: 1.6em; margin-bottom: 6px; }
+.header p { opacity: 0.8; font-size: 0.9em; }
+.tabs { display: flex; background: #1a1a2e; overflow-x: auto; scrollbar-width: thin; scrollbar-color: #3949ab #1a1a2e; }
+.tabs::-webkit-scrollbar { height: 4px; }
+.tabs::-webkit-scrollbar-track { background: #1a1a2e; }
+.tabs::-webkit-scrollbar-thumb { background: #3949ab; border-radius: 2px; }
+.tab-link { flex: none; padding: 14px 16px; color: rgba(255,255,255,0.7); border: none; background: none; cursor: pointer; font-size: 0.82em; font-weight: 600; white-space: nowrap; border-bottom: 3px solid transparent; transition: all 0.2s;  text-decoration: none; display: inline-flex; align-items: center; }
+.tab-link:hover { color: white; background: rgba(255,255,255,0.1); }
+.tab-link.active { color: #64b5f6; border-bottom-color: #64b5f6; background: rgba(100,181,246,0.1); }
+.tab-content { display: block; }
+.content { max-width: 900px; margin: 0 auto; padding: 30px 20px; }
+h1 { font-size: 1.8em; color: #1a237e; margin: 30px 0 15px; padding-bottom: 10px; border-bottom: 3px solid #1a237e; }
+h2 { font-size: 1.4em; color: #283593; margin: 25px 0 12px; padding: 10px 15px; background: linear-gradient(to right, #e8eaf6, transparent); border-left: 4px solid #3949ab; border-radius: 4px; }
+h3 { font-size: 1.15em; color: #3949ab; margin: 20px 0 10px; }
+h4 { font-size: 1em; color: #5c6bc0; margin: 15px 0 8px; }
+p { margin: 10px 0; }
+ul, ol { margin: 10px 0 10px 25px; }
+li { margin: 5px 0; }
+table { width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 0.9em; overflow-x: auto; display: block; }
+th { background: #283593; color: white; padding: 12px; text-align: left; }
+td { padding: 10px 12px; border-bottom: 1px solid #e0e0e0; vertical-align: top; }
+tr:nth-child(even) { background: #f8f9ff; }
+tr:hover { background: #e8eaf6; }
+code { background: #f0f0f0; padding: 2px 6px; border-radius: 3px; font-family: "Courier New", monospace; font-size: 0.88em; color: #d32f2f; }
+pre { background: #1e1e2e; color: #cdd6f4; padding: 20px; border-radius: 8px; overflow-x: auto; margin: 15px 0; line-height: 1.6; }
+pre code { background: none; color: inherit; padding: 0; font-size: 0.9em; }
+blockquote { border-left: 4px solid #7986cb; padding: 12px 20px; background: #f3f4ff; margin: 15px 0; border-radius: 0 8px 8px 0; color: #444; }
+blockquote p { margin: 6px 0; }
+hr { border: none; border-top: 2px solid #e0e0e0; margin: 30px 0; }
+strong { color: #1a237e; }
+a { color: #3949ab; }
+.footer { text-align: center; padding: 16px; color: rgba(255,255,255,0.5); background: #1a1a2e; margin-top: 40px; font-size: 0.8em; }
+.literacy-quiz { background: #fff; border-bottom: 1px solid #dfe3f0; box-shadow: 0 2px 10px rgba(26,35,126,0.08); }
+.literacy-quiz-inner { max-width: 900px; margin: 0 auto; padding: 14px 20px; }
+.literacy-quiz-label { color: #5c6bc0; font-size: 0.78em; font-weight: 700; letter-spacing: 0; margin-bottom: 4px; }
+.literacy-quiz-question { color: #1a237e; font-weight: 700; margin: 0; }
+.literacy-quiz-answer { color: #444; margin: 6px 0 0; font-size: 0.92em;  display: none; }
+.literacy-quiz-answer strong { color: #2e7d32; }
+.quick-links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.quick-link { display: inline-flex; align-items: center; padding: 7px 12px; border: 1px solid #3949ab; border-radius: 6px; color: #3949ab; background: #fff; font-size: 0.86em; font-weight: 700; text-decoration: none; }
+.quick-link:hover { background: #e8eaf6; }
+
+.quiz-answer-button { margin-top: 8px; padding: 7px 12px; border: 1px solid #3949ab; border-radius: 6px; background: #3949ab; color: #fff; font-weight: 700; cursor: pointer; }
+.quiz-answer-button:hover { background: #283593; }
+
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>🛡️ AIエージェント セキュリティドキュメント</h1>
+  <p>AI導入・開発時のセキュリティガイド集 | 2026年版</p>
+</div>
+<div class="tabs">
+  <a class="tab-link" href="security-docs-standalone.html">📋 開発ガイド</a>
+  <a class="tab-link" href="threats.html">⚠️ 脅威一覧</a>
+  <a class="tab-link active" href="release-check.html">✅ リリース前チェック</a>
+  <a class="tab-link" href="claude-md.html">📁 CLAUDE.md設定</a>
+  <a class="tab-link" href="visibility.html">🔐 中級編：誰が何を見るか</a>
+  <a class="tab-link" href="vpn.html">🌐 VPN解説</a>
+  <a class="tab-link" href="public-pc.html">🏙️ 社外でのPC利用</a>
+  <a class="tab-link" href="password-auth.html">🔑 パスワード・認証</a>
+  <a class="tab-link" href="daily-check.html">✅ 日常チェック</a>
+  <a class="tab-link" href="glossary.html">🧠 用語集・会話術</a>
+</div>
+<div class="literacy-quiz" id="literacyQuiz">
+  <div class="literacy-quiz-inner">
+    <div class="literacy-quiz-label">今日のセキュリティ・リテラシーテスト</div>
+    <p class="literacy-quiz-question" id="quizQuestion">Loading...</p>
+    <button class="quiz-answer-button" type="button" id="quizAnswerButton">&#x7B54;&#x3048;&#x3092;&#x8868;&#x793A;</button>
+    <p class="literacy-quiz-answer" id="quizAnswer"></p>
+    <div class="quick-links">
+      <a class="quick-link" href="daily-check.html">✅ 日常チェックリストを見る</a>
+      <a class="quick-link" href="glossary.html">🧠 用語集・会話術を見る</a>
+    </div>
+  </div>
+</div>
+<div class="tab-content" id="tab2"><div class="content"><h1>AIエージェント開発 セキュリティガイド</h1>
+<h2>〜 製品リリースまでに最低限押さえるべき観点と、クライアントへの説明資料 〜</h2>
+<p><strong>対象読者</strong>：AIエージェントを活用して開発を行っているエンジニア・開発支援者<br />
+<strong>目的</strong>：製品リリース時のセキュリティ最低基準の整理 ＋ クライアントへの説明で使える言葉の整理<br />
+<strong>最終更新</strong>：2026年6月</p>
+<hr />
+<h2>はじめに：なぜ「AIエージェント開発」はセキュリティリスクが高いのか</h2>
+<p>従来の開発では、<strong>人間のエンジニアが設計・レビュー・テスト</strong>を段階的に実施しました。<br />
+AIエージェントによる開発では、<strong>コードが「できてしまう」スピードが速い分、見落としも速い</strong>という特徴があります。</p>
+<table>
+<thead>
+<tr>
+<th>従来の開発</th>
+<th>AIエージェント開発</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>設計 → 実装 → レビュー → テスト → リリース</td>
+<td>指示 → コード生成 → 即実行 （工程が省略されがち）</td>
+</tr>
+<tr>
+<td>セキュリティレビューが工程に組み込まれている</td>
+<td>セキュリティ観点が明示的に指示されないと省かれる</td>
+</tr>
+<tr>
+<td>チームによる多眼チェック</td>
+<td>1人 + AI のため盲点が生まれやすい</td>
+</tr>
+<tr>
+<td>コードの意図が設計書に残る</td>
+<td>生成コードの「なぜそう書いたか」が追いにくい</td>
+</tr>
+</tbody>
+</table>
+<p><strong>つまり</strong>：AIエージェントは「速く動くものを作る力」は高いが、「安全に動くものを作る判断」は人間が補う必要があります。</p>
+<hr />
+<h2>PART 1｜製品リリース前に最低限確認すべきセキュリティチェックリスト</h2>
+<h3>チェックリストの使い方</h3>
+<ul>
+<li>リリース前に<strong>全項目を1つずつ確認</strong>する</li>
+<li>「対応済み」「対応不要（理由あり）」「未対応（リスク受容）」の3択で判定</li>
+<li>未対応が残る場合はリスクを認識した上で意思決定する</li>
+</ul>
+<hr />
+<h3>A｜認証・認可（誰が何にアクセスできるか）</h3>
+<ul>
+<li>
+<p>[ ] <strong>ログイン機能がある場合、パスワードはハッシュ化されているか</strong><br />
+  → <code>bcrypt</code> や <code>Argon2</code> など。平文・MD5・SHA1は不可。</p>
+</li>
+<li>
+<p>[ ] <strong>APIエンドポイントに認証がかかっているか</strong><br />
+  → 「URLを知っていれば誰でもアクセスできる」状態になっていないか確認。</p>
+</li>
+<li>
+<p>[ ] <strong>ユーザーAのデータをユーザーBが取得できないか</strong>（水平権限昇格）<br />
+  → <code>/api/user/123/data</code> の123を変えたら他人のデータが見えないか確認。</p>
+</li>
+<li>
+<p>[ ] <strong>管理者機能に一般ユーザーがアクセスできないか</strong>（垂直権限昇格）<br />
+  → 管理画面・削除API・設定変更APIは権限チェックがあるか。</p>
+</li>
+<li>
+<p>[ ] <strong>セッションは適切に管理されているか</strong><br />
+  → ログアウト後にセッションが無効化されるか。セッションの有効期限はあるか。</p>
+</li>
+</ul>
+<hr />
+<h3>B｜データ保護（情報の扱い）</h3>
+<ul>
+<li>
+<p>[ ] <strong>個人情報・機密情報はどこに保存されているか把握しているか</strong><br />
+  → DB・ログ・ファイル・外部サービスのどこに何が入るか整理する。</p>
+</li>
+<li>
+<p>[ ] <strong>通信はHTTPS（TLS）で暗号化されているか</strong><br />
+  → HTTPのみでの通信は絶対に避ける。</p>
+</li>
+<li>
+<p>[ ] <strong>ログに個人情報・パスワード・APIキーが出力されていないか</strong><br />
+  → <code>console.log(user)</code> や <code>print(request)</code> で丸ごと出力していないか確認。</p>
+</li>
+<li>
+<p>[ ] <strong>APIキー・シークレットがソースコードに直書きされていないか</strong><br />
+  → <code>.env</code> や環境変数を使う。GitHubにシークレットが含まれたまま公開されていないか確認。</p>
+</li>
+<li>
+<p>[ ] <strong>不要なデータを保持していないか</strong><br />
+  → 使わなくなったデータは削除する設計になっているか。</p>
+</li>
+</ul>
+<hr />
+<h3>C｜入力値の検証（外部からの攻撃への対策）</h3>
+<ul>
+<li>
+<p>[ ] <strong>SQLインジェクション対策がされているか</strong><br />
+  → ユーザー入力をSQLに直接埋め込んでいないか。ORMやプリペアドステートメントを使っているか。</p>
+</li>
+<li>
+<p>[ ] <strong>XSS（クロスサイトスクリプティング）対策がされているか</strong><br />
+  → ユーザーが入力した内容をそのままHTMLに出力していないか。</p>
+</li>
+<li>
+<p>[ ] <strong>ファイルアップロードがある場合、種類とサイズを制限しているか</strong><br />
+  → 悪意あるファイルを実行ファイルとしてアップロードされないか。</p>
+</li>
+<li>
+<p>[ ] <strong>AIエージェントへのプロンプトに外部入力が含まれる場合、検証しているか</strong>（プロンプトインジェクション）<br />
+  → ユーザー入力がシステムプロンプトを書き換えたり、エージェントに意図しない操作をさせないか。</p>
+</li>
+</ul>
+<hr />
+<h3>D｜AIエージェント固有のセキュリティ</h3>
+<ul>
+<li>
+<p>[ ] <strong>エージェントに与えている権限は必要最小限か</strong>（最小権限の原則）<br />
+  → ファイル削除権限・DB書き込み権限・外部API呼び出し権限など、本当に必要なものだけか。</p>
+</li>
+<li>
+<p>[ ] <strong>エージェントが実行できる操作に上限・制限があるか</strong><br />
+  → 1回の操作でどこまでの範囲に影響するかを制限しているか。</p>
+</li>
+<li>
+<p>[ ] <strong>エージェントの行動ログが残っているか</strong><br />
+  → 何をいつ実行したか追跡できるか。問題発生時に調査できるか。</p>
+</li>
+<li>
+<p>[ ] <strong>人間の承認が必要な操作を定義しているか</strong><br />
+  → メール送信・課金・データ削除などの高リスク操作は人間が確認する仕組みがあるか。</p>
+</li>
+<li>
+<p>[ ] <strong>外部サービスに接続する場合、接続先を制限しているか</strong><br />
+  → 想定外の外部URLにリクエストを送れないようになっているか（SSRF対策）。</p>
+</li>
+</ul>
+<hr />
+<h3>E｜インフラ・運用</h3>
+<ul>
+<li>
+<p>[ ] <strong>使用しているライブラリ・フレームワークに既知の脆弱性がないか</strong><br />
+  → <code>npm audit</code>、<code>pip check</code>、<code>Dependabot</code> 等で確認。</p>
+</li>
+<li>
+<p>[ ] <strong>本番環境と開発環境は分離されているか</strong><br />
+  → 本番DBに開発用データが混入していないか。</p>
+</li>
+<li>
+<p>[ ] <strong>エラーメッセージが詳細すぎないか</strong><br />
+  → スタックトレースやDB構造がユーザーに表示されていないか。</p>
+</li>
+<li>
+<p>[ ] <strong>バックアップは取れているか</strong><br />
+  → データ消失時に復元できるか。</p>
+</li>
+<li>
+<p>[ ] <strong>不要なポート・サービスが公開されていないか</strong><br />
+  → 管理用ポート（SSH, DB）が外部からアクセスできないか。</p>
+</li>
+</ul>
+<hr />
+<h2>PART 2｜AIエージェント開発と従来開発の工程比較</h2>
+<h3>本来の開発工程（セキュリティを含む）</h3>
+<pre><code>1. 要件定義
+   └── 扱うデータの種類・リスクレベルの確認
+
+2. 設計
+   └── 認証方式・データフロー・権限モデルの設計
+   └── 脅威モデリング（何が攻撃されうるか洗い出し）
+
+3. 実装
+   └── セキュアコーディング規約に沿った実装
+   └── 入力値検証・エラーハンドリングの実装
+
+4. テスト
+   └── 機能テスト + セキュリティテスト（ペネトレーション等）
+   └── 認証・認可の境界テスト
+
+5. コードレビュー
+   └── セキュリティ観点でのレビュー
+   └── 第三者による確認
+
+6. リリース前確認
+   └── 脆弱性スキャン
+   └── 本番環境設定の確認
+
+7. 運用・監視
+   └── ログ監視・異常検知
+   └── 定期的な脆弱性アップデート
+</code></pre>
+<h3>AIエージェント開発で省かれがちな工程</h3>
+<ul>
+<li><strong>脅威モデリング</strong>（どこが攻撃されうるか考える工程）</li>
+<li><strong>セキュリティテスト</strong>（意図的に攻撃してみる工程）</li>
+<li><strong>コードレビュー</strong>（他者の目によるチェック）</li>
+<li><strong>設計ドキュメントの整備</strong>（コードの意図が残らない）</li>
+</ul>
+<h3>補完方法</h3>
+<p>AIエージェントに以下を明示的に指示することで補完できます：</p>
+<pre><code>【プロンプト例】
+このコードに対して以下を確認してください：
+- SQLインジェクションのリスクはないか
+- 認証・認可の抜けはないか
+- 個人情報の扱いは適切か
+- APIキーなどシークレットがハードコードされていないか
+問題があれば修正し、修正内容を説明してください。
+</code></pre>
+<hr />
+<h2>PART 3｜クライアントへの説明で使えるキーワードと説明文</h2>
+<h3>ミーティングで使える言葉集</h3>
+<h4>「セキュリティリスク」の説明</h4>
+<blockquote>
+<p>「AIを使って素早く開発できるのは大きな強みです。一方で、スピードが上がった分、セキュリティのチェックを意識的に組み込まないと、穴が生まれやすくなります。今日はその穴を事前につぶすための話をしたいと思います。」</p>
+</blockquote>
+<hr />
+<h4>認証・認可</h4>
+<ul>
+<li><strong>認証</strong>（Authentication）：「あなたは誰か」を確認する仕組み（ログイン）</li>
+<li><strong>認可</strong>（Authorization）：「あなたは何ができるか」を決める仕組み（権限）</li>
+</ul>
+<blockquote>
+<p>「よくあるのが、ログインはできるのに、ログインしたら他人のデータも見えてしまうケースです。認証と認可は別々に設計する必要があります。」</p>
+</blockquote>
+<hr />
+<h4>最小権限の原則</h4>
+<blockquote>
+<p>「AIエージェントに与える権限は、必要なものだけに絞ります。たとえば、データを読むだけでいいなら書き込み権限は与えない。これを最小権限の原則と言います。権限が広いほど、万が一の際の被害範囲も広がります。」</p>
+</blockquote>
+<hr />
+<h4>プロンプトインジェクション</h4>
+<blockquote>
+<p>「AIに指示を送る際に、悪意あるユーザーが入力欄を使って『本来の指示を無視して、〇〇をやれ』と命令を差し込む攻撃があります。これをプロンプトインジェクションと言います。ユーザーの入力をそのままAIに渡す設計は特に注意が必要です。」</p>
+</blockquote>
+<hr />
+<h4>SQLインジェクション</h4>
+<blockquote>
+<p>「ユーザーが入力した文字列をそのままデータベースへの命令に使っていると、悪意あるコードを仕込まれる可能性があります。これはAI開発に限らず、Webシステム全般で最も古くから知られている攻撃手法の一つです。」</p>
+</blockquote>
+<hr />
+<h4>OWASP（オワスプ）</h4>
+<blockquote>
+<p>「OWASPというセキュリティの国際非営利団体が、毎年『Webアプリケーションで特に危険な脆弱性Top 10』を公開しています。AIを使ったシステムでも、このリストをベースに確認することが業界標準になっています。」</p>
+</blockquote>
+<hr />
+<h4>脆弱性スキャン・ペネトレーションテスト</h4>
+<ul>
+<li><strong>脆弱性スキャン</strong>：ツールを使って既知の穴を自動で探す</li>
+<li><strong>ペネトレーションテスト</strong>（ペネトレ・ペンテスト）：専門家が実際に攻撃者の視点で試す</li>
+</ul>
+<blockquote>
+<p>「リリース前に、ツールを使った自動スキャンと、専門家による手動テストを組み合わせることが理想です。予算に応じて最低限の自動スキャンだけでも実施することをお勧めします。」</p>
+</blockquote>
+<hr />
+<h4>ゼロトラスト</h4>
+<blockquote>
+<p>「従来は社内ネットワークは信頼する、という考え方でしたが、今は『何も信頼しない、常に検証する』という考え方が標準です。これをゼロトラストと言います。AIエージェントも同様に、社内のシステムだからといって無条件に信頼せず、都度認証・認可を確認する設計にします。」</p>
+</blockquote>
+<hr />
+<h4>監査ログ</h4>
+<blockquote>
+<p>「誰が、いつ、何をしたかの記録を残すことを監査ログと言います。AIエージェントが何かの操作をした際も、同じように記録を残します。問題が発生した時に原因を追える状態にしておくことが重要です。」</p>
+</blockquote>
+<hr />
+<h3>クライアントへの説明フロー（ミーティング構成案）</h3>
+<pre><code>【所要時間：30〜45分】
+
+① 導入（5分）
+   「AIで速く作れる時代だからこそ、意識すべきことがあります」
+   → スピードとリスクのトレードオフを共有
+
+② 今のシステムの状況確認（10分）
+   「扱うデータは何ですか？個人情報はありますか？」
+   「認証機能はありますか？」
+   「外部サービスとの連携はありますか？」
+   → リスクレベルの把握
+
+③ 最低限のチェックリスト確認（10分）
+   → PART 1のチェックリストを一緒に確認
+
+④ 優先度の整理（5分）
+   「まずここから対応しましょう」
+   → 高リスク項目を3つ以内に絞る
+
+⑤ 次のステップ（5分）
+   「スキャンツールを使ってみましょう」
+   「この部分はコードを見直しましょう」
+   → 具体的なアクションに落とす
+</code></pre>
+<hr />
+<h2>PART 4｜クライアントに応じたリスクレベルの判断基準</h2>
+<h3>リスクが高いシステムの特徴（特に注意が必要）</h3>
+<ul>
+<li><strong>個人情報を扱う</strong>（氏名・住所・メールアドレス・電話番号）</li>
+<li><strong>決済・金融情報を扱う</strong>（クレジットカード・銀行口座）</li>
+<li><strong>医療・健康情報を扱う</strong></li>
+<li><strong>多数のユーザーが使う</strong>（不特定多数へのサービス）</li>
+<li><strong>外部からインターネット経由でアクセスできる</strong></li>
+</ul>
+<h3>リスクが比較的低いシステムの例</h3>
+<ul>
+<li><strong>社内のみで使うツール</strong>（外部に公開しない）</li>
+<li><strong>個人情報を扱わない業務ツール</strong></li>
+<li><strong>プロトタイプ・PoC段階のもの</strong></li>
+</ul>
+<h3>リスクレベルに応じた対応方針</h3>
+<table>
+<thead>
+<tr>
+<th>リスクレベル</th>
+<th>例</th>
+<th>最低限の対応</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>高</td>
+<td>個人情報DB・決済機能付きサービス</td>
+<td>PART1全項目 ＋ 専門家によるレビュー</td>
+</tr>
+<tr>
+<td>中</td>
+<td>ログイン機能付きの社内外ツール</td>
+<td>PART1の A〜C項目必須</td>
+</tr>
+<tr>
+<td>低</td>
+<td>社内限定・個人情報なしのツール</td>
+<td>PART1の B・C項目確認</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>PART 5｜今すぐ使える無料ツール</h2>
+<table>
+<thead>
+<tr>
+<th>ツール</th>
+<th>用途</th>
+<th>対象</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>npm audit</code></td>
+<td>Node.jsの依存パッケージの脆弱性確認</td>
+<td>JavaScript</td>
+</tr>
+<tr>
+<td><code>pip-audit</code></td>
+<td>Pythonパッケージの脆弱性確認</td>
+<td>Python</td>
+</tr>
+<tr>
+<td>OWASP ZAP</td>
+<td>Webアプリの自動脆弱性スキャン</td>
+<td>Web全般</td>
+</tr>
+<tr>
+<td>GitHub Dependabot</td>
+<td>依存ライブラリの自動アップデート提案</td>
+<td>GitHub利用者</td>
+</tr>
+<tr>
+<td>GitLeaks</td>
+<td>ソースコード中のシークレット（APIキー等）漏洩チェック</td>
+<td>Git全般</td>
+</tr>
+<tr>
+<td>Snyk（無料枠）</td>
+<td>多言語対応の脆弱性スキャン</td>
+<td>Web全般</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>まとめ：最低限これだけ押さえる</h2>
+<h3>エンジニア・開発者として</h3>
+<ol>
+<li><strong>シークレット（APIキー等）をコードに書かない</strong> → 環境変数を使う</li>
+<li><strong>ユーザー入力をそのまま使わない</strong> → 必ず検証・エスケープする</li>
+<li><strong>権限は必要最小限にする</strong> → エージェントも人間も同様</li>
+<li><strong>ログを残す</strong> → 何が起きたか追跡できるようにする</li>
+<li><strong>リリース前にスキャンを走らせる</strong> → 既知の穴を潰す</li>
+</ol>
+<h3>クライアントへの説明として</h3>
+<ol>
+<li><strong>「速く作れる」と「安全に作れる」は別の話</strong> と最初に共有する</li>
+<li><strong>扱うデータのリスクレベルを最初に確認する</strong></li>
+<li><strong>チェックリストを一緒に確認し、優先度を決める</strong></li>
+<li><strong>専門用語は使いすぎず、「誰が何にアクセスできるか」という言葉で説明する</strong></li>
+<li><strong>「完全にゼロリスクはない。リスクを知った上で判断する」</strong> というスタンスを共有する</li>
+</ol>
+<hr />
+<p><em>このドキュメントは社内参照用・クライアント説明補助資料として作成されています。</em><br />
+<em>実際のシステムのセキュリティ評価には、対象システムの詳細な調査が必要です。</em></p></div></div>
+<div class="footer">
+  <p>AI&#x30A8;&#x30FC;&#x30B8;&#x30A7;&#x30F3;&#x30C8; &#x30BB;&#x30AD;&#x30E5;&#x30EA;&#x30C6;&#x30A3;&#x30C9;&#x30AD;&#x30E5;&#x30E1;&#x30F3;&#x30C8; v4.0 | 2026&#x5E74;&#x7248;</p>
+</div>
+<script>
+var literacyQuestions = [
+  {
+    q: "Q. VPNで守れるものと、守れないものは何ですか？",
+    a: "A. 守れるのは通信経路。AIやSaaSに送った内容、偽ログイン画面への入力、端末感染は別対策が必要です。"
+  },
+  {
+    q: "Q. 最小権限とは何ですか？",
+    a: "A. 必要な人に、必要な範囲だけ権限を渡す考え方です。全員管理者を避けます。"
+  },
+  {
+    q: "Q. MFAを入れても残るリスクは何ですか？",
+    a: "A. 端末乗っ取り、セッションCookie窃取、MFA疲労攻撃、復旧メールの乗っ取りなどです。"
+  },
+  {
+    q: "Q. 共有アカウントの一番の問題は何ですか？",
+    a: "A. 誰が操作したか追えず、退職者や外注先のアクセス停止も曖昧になることです。"
+  },
+  {
+    q: "Q. AI導入時に最初に分類すべき情報は何ですか？",
+    a: "A. AIに送ってよい情報、マスキングすればよい情報、絶対に送らない情報の3分類です。"
+  },
+  {
+    q: "Q. フリーWi-FiでSSID確認が必要な理由は何ですか？",
+    a: "A. Evil Twinのように本物と同名・類似名の偽Wi-Fiへ接続する可能性があるためです。"
+  },
+  {
+    q: "Q. 監査ログで最低限見たい項目は何ですか？",
+    a: "A. 誰が、いつ、どこから、何にアクセスし、何を変更したかです。"
+  },
+  {
+    q: "Q. .envをGitに入れなければ安全と言えますか？",
+    a: "A. 言えません。AIエージェント、端末紛失、マルウェア、画面共有で読まれる可能性があります。"
+  },
+  {
+    q: "Q. ランサムウェア対策でバックアップ以外に必要なことは何ですか？",
+    a: "A. 復旧テスト、権限分離、感染端末の隔離手順、連絡先の明確化です。"
+  },
+  {
+    q: "Q. プロンプトインジェクションとは何ですか？",
+    a: "A. 外部文書やWebページに隠れた命令で、AIに想定外の行動をさせる攻撃です。"
+  }
+];
+
+document.addEventListener('DOMContentLoaded', function() {
+  var quiz = literacyQuestions[Math.floor(Math.random() * literacyQuestions.length)];
+  var questionEl = document.getElementById('quizQuestion');
+  var answerEl = document.getElementById('quizAnswer');
+  var buttonEl = document.getElementById('quizAnswerButton');
+  if (questionEl && answerEl && buttonEl && quiz) {
+    questionEl.textContent = quiz.q;
+    answerEl.innerHTML = '<strong>\u7b54\u3048\uff1a</strong>' + quiz.a.replace(/^A. /, '');
+    buttonEl.addEventListener('click', function() {
+      var isOpen = answerEl.style.display === 'block';
+      answerEl.style.display = isOpen ? 'none' : 'block';
+      buttonEl.textContent = isOpen ? '\u7b54\u3048\u3092\u8868\u793a' : '\u7b54\u3048\u3092\u96a0\u3059';
+    });
+  }
+
+  document.querySelectorAll('h2').forEach(function(h) {
+    if (h.textContent.includes('\u7d50\u8ad6')) {
+      h.style.background = 'linear-gradient(to right, #e8f5e9, transparent)';
+      h.style.borderLeftColor = '#43a047';
+      h.style.color = '#2e7d32';
+    }
+  });
+});
+</script>
+</body>
+</html>

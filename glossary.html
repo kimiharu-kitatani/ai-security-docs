@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Security Docs</title>
+<style>
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", "Yu Gothic", sans-serif; background: #f5f7fa; color: #333; line-height: 1.7; }
+.header { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); color: white; padding: 24px 20px; text-align: center; }
+.header h1 { font-size: 1.6em; margin-bottom: 6px; }
+.header p { opacity: 0.8; font-size: 0.9em; }
+.tabs { display: flex; background: #1a1a2e; overflow-x: auto; scrollbar-width: thin; scrollbar-color: #3949ab #1a1a2e; }
+.tabs::-webkit-scrollbar { height: 4px; }
+.tabs::-webkit-scrollbar-track { background: #1a1a2e; }
+.tabs::-webkit-scrollbar-thumb { background: #3949ab; border-radius: 2px; }
+.tab-link { flex: none; padding: 14px 16px; color: rgba(255,255,255,0.7); border: none; background: none; cursor: pointer; font-size: 0.82em; font-weight: 600; white-space: nowrap; border-bottom: 3px solid transparent; transition: all 0.2s;  text-decoration: none; display: inline-flex; align-items: center; }
+.tab-link:hover { color: white; background: rgba(255,255,255,0.1); }
+.tab-link.active { color: #64b5f6; border-bottom-color: #64b5f6; background: rgba(100,181,246,0.1); }
+.tab-content { display: block; }
+.content { max-width: 900px; margin: 0 auto; padding: 30px 20px; }
+h1 { font-size: 1.8em; color: #1a237e; margin: 30px 0 15px; padding-bottom: 10px; border-bottom: 3px solid #1a237e; }
+h2 { font-size: 1.4em; color: #283593; margin: 25px 0 12px; padding: 10px 15px; background: linear-gradient(to right, #e8eaf6, transparent); border-left: 4px solid #3949ab; border-radius: 4px; }
+h3 { font-size: 1.15em; color: #3949ab; margin: 20px 0 10px; }
+h4 { font-size: 1em; color: #5c6bc0; margin: 15px 0 8px; }
+p { margin: 10px 0; }
+ul, ol { margin: 10px 0 10px 25px; }
+li { margin: 5px 0; }
+table { width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 0.9em; overflow-x: auto; display: block; }
+th { background: #283593; color: white; padding: 12px; text-align: left; }
+td { padding: 10px 12px; border-bottom: 1px solid #e0e0e0; vertical-align: top; }
+tr:nth-child(even) { background: #f8f9ff; }
+tr:hover { background: #e8eaf6; }
+code { background: #f0f0f0; padding: 2px 6px; border-radius: 3px; font-family: "Courier New", monospace; font-size: 0.88em; color: #d32f2f; }
+pre { background: #1e1e2e; color: #cdd6f4; padding: 20px; border-radius: 8px; overflow-x: auto; margin: 15px 0; line-height: 1.6; }
+pre code { background: none; color: inherit; padding: 0; font-size: 0.9em; }
+blockquote { border-left: 4px solid #7986cb; padding: 12px 20px; background: #f3f4ff; margin: 15px 0; border-radius: 0 8px 8px 0; color: #444; }
+blockquote p { margin: 6px 0; }
+hr { border: none; border-top: 2px solid #e0e0e0; margin: 30px 0; }
+strong { color: #1a237e; }
+a { color: #3949ab; }
+.footer { text-align: center; padding: 16px; color: rgba(255,255,255,0.5); background: #1a1a2e; margin-top: 40px; font-size: 0.8em; }
+.literacy-quiz { background: #fff; border-bottom: 1px solid #dfe3f0; box-shadow: 0 2px 10px rgba(26,35,126,0.08); }
+.literacy-quiz-inner { max-width: 900px; margin: 0 auto; padding: 14px 20px; }
+.literacy-quiz-label { color: #5c6bc0; font-size: 0.78em; font-weight: 700; letter-spacing: 0; margin-bottom: 4px; }
+.literacy-quiz-question { color: #1a237e; font-weight: 700; margin: 0; }
+.literacy-quiz-answer { color: #444; margin: 6px 0 0; font-size: 0.92em;  display: none; }
+.literacy-quiz-answer strong { color: #2e7d32; }
+.quick-links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.quick-link { display: inline-flex; align-items: center; padding: 7px 12px; border: 1px solid #3949ab; border-radius: 6px; color: #3949ab; background: #fff; font-size: 0.86em; font-weight: 700; text-decoration: none; }
+.quick-link:hover { background: #e8eaf6; }
+
+.quiz-answer-button { margin-top: 8px; padding: 7px 12px; border: 1px solid #3949ab; border-radius: 6px; background: #3949ab; color: #fff; font-weight: 700; cursor: pointer; }
+.quiz-answer-button:hover { background: #283593; }
+
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>🛡️ AIエージェント セキュリティドキュメント</h1>
+  <p>AI導入・開発時のセキュリティガイド集 | 2026年版</p>
+</div>
+<div class="tabs">
+  <a class="tab-link" href="security-docs-standalone.html">📋 開発ガイド</a>
+  <a class="tab-link" href="threats.html">⚠️ 脅威一覧</a>
+  <a class="tab-link" href="release-check.html">✅ リリース前チェック</a>
+  <a class="tab-link" href="claude-md.html">📁 CLAUDE.md設定</a>
+  <a class="tab-link" href="visibility.html">🔐 中級編：誰が何を見るか</a>
+  <a class="tab-link" href="vpn.html">🌐 VPN解説</a>
+  <a class="tab-link" href="public-pc.html">🏙️ 社外でのPC利用</a>
+  <a class="tab-link" href="password-auth.html">🔑 パスワード・認証</a>
+  <a class="tab-link" href="daily-check.html">✅ 日常チェック</a>
+  <a class="tab-link active" href="glossary.html">🧠 用語集・会話術</a>
+</div>
+<div class="literacy-quiz" id="literacyQuiz">
+  <div class="literacy-quiz-inner">
+    <div class="literacy-quiz-label">今日のセキュリティ・リテラシーテスト</div>
+    <p class="literacy-quiz-question" id="quizQuestion">Loading...</p>
+    <button class="quiz-answer-button" type="button" id="quizAnswerButton">&#x7B54;&#x3048;&#x3092;&#x8868;&#x793A;</button>
+    <p class="literacy-quiz-answer" id="quizAnswer"></p>
+    <div class="quick-links">
+      <a class="quick-link" href="daily-check.html">✅ 日常チェックリストを見る</a>
+      <a class="quick-link" href="glossary.html">🧠 用語集・会話術を見る</a>
+    </div>
+  </div>
+</div>
+<div class="tab-content" id="tab9"><div class="content"><h1 id="security-glossary">セキュリティ・リテラシー用語集</h1>
+<h2>クライアントとの会話で押さえる言葉と論点</h2>
+<p><strong>目的</strong>：細かい技術名を暗記することではなく、リスクを整理し、優先順位を決め、相手が安心して相談できる状態を作ること。</p>
+<blockquote>
+<p><strong>会議での基本姿勢：</strong><br />
+「何が危険か」だけでなく、「どの業務で、どの情報が、どこを通り、誰に見えるか」を一緒に確認する。</p>
+</blockquote>
+<hr />
+<h2>最初に聞く5つの質問</h2>
+<pre><code>1. この業務で扱う一番守るべき情報は何ですか？
+2. その情報はどこに保存され、誰がアクセスできますか？
+3. 外部サービスやAIに送ってよい情報・送ってはいけない情報は分かれていますか？
+4. 退職者・外注先・共有アカウントのアクセスは管理できていますか？
+5. 事故が起きた時、誰が気づき、誰が止め、誰に報告しますか？
+</code></pre>
+<hr />
+<h2>押さえておくキーワード</h2>
+<table>
+<thead>
+<tr>
+<th>キーワード</th>
+<th>一言でいうと</th>
+<th>会議での使い方</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>最小権限</td>
+<td>必要な人に、必要な範囲だけ許可する</td>
+<td>「全員管理者」になっていないか確認する</td>
+</tr>
+<tr>
+<td>ゼロトラスト</td>
+<td>社内だから安全、と決めつけない</td>
+<td>端末・ユーザー・場所ごとに確認する考え方として説明する</td>
+</tr>
+<tr>
+<td>MFA / 2FA</td>
+<td>パスワード以外の確認を足す</td>
+<td>重要サービスは認証アプリ以上を推奨する</td>
+</tr>
+<tr>
+<td>パスキー</td>
+<td>パスワードを使わず端末認証でログインする仕組み</td>
+<td>フィッシング対策として話題に出せる</td>
+</tr>
+<tr>
+<td>SSO</td>
+<td>GoogleやMicrosoftなど1つの認証基盤でログインを管理する</td>
+<td>退職時のアクセス停止をまとめやすい</td>
+</tr>
+<tr>
+<td>RBAC</td>
+<td>役割ごとに権限を分ける</td>
+<td>管理者・一般担当・閲覧のみを分ける話に使う</td>
+</tr>
+<tr>
+<td>監査ログ</td>
+<td>誰が、いつ、何をしたかの記録</td>
+<td>事故後に追えるか、普段から確認する</td>
+</tr>
+<tr>
+<td>DLP</td>
+<td>機密情報の持ち出しを検知・防止する仕組み</td>
+<td>個人情報や顧客名簿の外部送信対策で使う</td>
+</tr>
+<tr>
+<td>シャドーIT</td>
+<td>会社が把握していない外部ツール利用</td>
+<td>便利ツール利用を責めず、棚卸しする入口にする</td>
+</tr>
+<tr>
+<td>サプライチェーンリスク</td>
+<td>自社でなく取引先・利用ツール経由で起きるリスク</td>
+<td>外注先、SaaS、プラグイン、npm/pip依存の確認に使う</td>
+</tr>
+<tr>
+<td>シークレット管理</td>
+<td>APIキー・パスワードを安全に保管すること</td>
+<td>.env直書きから1PasswordやSecrets Managerへの移行を提案する</td>
+</tr>
+<tr>
+<td>インシデントレスポンス</td>
+<td>事故発生時の初動手順</td>
+<td>「誰に連絡するか」「何を止めるか」を事前に決める</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>攻撃・脅威の用語</h2>
+<table>
+<thead>
+<tr>
+<th>用語</th>
+<th>意味</th>
+<th>まず見る対策</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>フィッシング</td>
+<td>偽メール・偽サイトで認証情報を盗む</td>
+<td>MFA、パスキー、URL確認、訓練</td>
+</tr>
+<tr>
+<td>スミッシング</td>
+<td>SMSを使ったフィッシング</td>
+<td>SMSリンクを開かない、公式アプリから確認</td>
+</tr>
+<tr>
+<td>ビジネスメール詐欺（BEC）</td>
+<td>取引先や経営者になりすまして送金させる</td>
+<td>振込先変更は電話など別経路で確認</td>
+</tr>
+<tr>
+<td>ランサムウェア</td>
+<td>データを暗号化し、復旧と引き換えに金銭要求する</td>
+<td>バックアップ、権限分離、EDR、初動手順</td>
+</tr>
+<tr>
+<td>マルウェア</td>
+<td>悪意あるソフト全般</td>
+<td>更新、EDR、未知USB禁止、管理者権限制限</td>
+</tr>
+<tr>
+<td>認証情報漏洩</td>
+<td>ID・パスワード・APIキーが外部に出る</td>
+<td>ローテーション、MFA、パスワード使い回し禁止</td>
+</tr>
+<tr>
+<td>Evil Twin</td>
+<td>本物と同名の偽Wi-Fi</td>
+<td>SSID確認、自動接続OFF、VPN、テザリング</td>
+</tr>
+<tr>
+<td>BadUSB</td>
+<td>USB機器がキーボード等に化けて操作する攻撃</td>
+<td>不明USB禁止、離席時ロック、USB制御</td>
+</tr>
+<tr>
+<td>プロンプトインジェクション</td>
+<td>AIに隠れた命令を読ませて意図しない動作をさせる</td>
+<td>外部入力を信用しない、ツール実行前確認、権限分離</td>
+</tr>
+<tr>
+<td>データポイズニング</td>
+<td>学習・参照データに悪い情報を混ぜる</td>
+<td>情報源管理、レビュー、RAGの参照元確認</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>AI導入時に強い人に見える論点</h2>
+<pre><code>□ AIに送ってよい情報・送ってはいけない情報を分類する
+□ APIキーや個人情報がプロンプト・ログ・スクショに混ざらない運用にする
+□ AIエージェントに読ませないファイルを明確にする
+□ ツール実行・外部送信・ファイル削除は人間の確認を挟む
+□ 生成物は「正しさ」「権限」「公開範囲」の3点でレビューする
+□ 社内ルールは厳しくしすぎず、現場が守れる形に落とす
+</code></pre>
+<hr />
+<h2>会議で使える言い回し</h2>
+<pre><code>「まず脅威を増やすより、守るべき情報と入口を整理しましょう」
+「このリスクは技術対策より、運用ルールでかなり下げられます」
+「VPNは通信経路の対策で、AIに送った内容そのものは守れません」
+「便利さを落としすぎると守られないので、現場の導線に合わせます」
+「事故が起きない前提ではなく、起きた時に止められる形にしましょう」
+「共有アカウントは、誰が操作したか追えないのが一番の問題です」
+</code></pre>
+<hr />
+<h2>クライアントに見せる優先順位</h2>
+<table>
+<thead>
+<tr>
+<th>優先度</th>
+<th>見るポイント</th>
+<th>理由</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>MFA、退職者アカウント、共有アカウント</td>
+<td>乗っ取りと内部不正の入口になりやすい</td>
+</tr>
+<tr>
+<td>2</td>
+<td>APIキー、.env、パスワード共有</td>
+<td>漏洩すると被害が即時に広がる</td>
+</tr>
+<tr>
+<td>3</td>
+<td>個人情報・顧客情報の保存場所</td>
+<td>法務・信用への影響が大きい</td>
+</tr>
+<tr>
+<td>4</td>
+<td>バックアップと復旧手順</td>
+<td>ランサムウェアや誤削除から戻れるかが決まる</td>
+</tr>
+<tr>
+<td>5</td>
+<td>ログと通知</td>
+<td>事故に気づけない状態を避ける</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>一言まとめ：</strong> 用語をたくさん知っていることより、「守る情報」「入口」「権限」「ログ」「初動」を順番に確認できることが、セキュリティに強い人の見え方を作ります。</p>
+</blockquote>
+</div></div>
+<div class="footer">
+  <p>AI&#x30A8;&#x30FC;&#x30B8;&#x30A7;&#x30F3;&#x30C8; &#x30BB;&#x30AD;&#x30E5;&#x30EA;&#x30C6;&#x30A3;&#x30C9;&#x30AD;&#x30E5;&#x30E1;&#x30F3;&#x30C8; v4.0 | 2026&#x5E74;&#x7248;</p>
+</div>
+<script>
+var literacyQuestions = [
+  {
+    q: "Q. VPNで守れるものと、守れないものは何ですか？",
+    a: "A. 守れるのは通信経路。AIやSaaSに送った内容、偽ログイン画面への入力、端末感染は別対策が必要です。"
+  },
+  {
+    q: "Q. 最小権限とは何ですか？",
+    a: "A. 必要な人に、必要な範囲だけ権限を渡す考え方です。全員管理者を避けます。"
+  },
+  {
+    q: "Q. MFAを入れても残るリスクは何ですか？",
+    a: "A. 端末乗っ取り、セッションCookie窃取、MFA疲労攻撃、復旧メールの乗っ取りなどです。"
+  },
+  {
+    q: "Q. 共有アカウントの一番の問題は何ですか？",
+    a: "A. 誰が操作したか追えず、退職者や外注先のアクセス停止も曖昧になることです。"
+  },
+  {
+    q: "Q. AI導入時に最初に分類すべき情報は何ですか？",
+    a: "A. AIに送ってよい情報、マスキングすればよい情報、絶対に送らない情報の3分類です。"
+  },
+  {
+    q: "Q. フリーWi-FiでSSID確認が必要な理由は何ですか？",
+    a: "A. Evil Twinのように本物と同名・類似名の偽Wi-Fiへ接続する可能性があるためです。"
+  },
+  {
+    q: "Q. 監査ログで最低限見たい項目は何ですか？",
+    a: "A. 誰が、いつ、どこから、何にアクセスし、何を変更したかです。"
+  },
+  {
+    q: "Q. .envをGitに入れなければ安全と言えますか？",
+    a: "A. 言えません。AIエージェント、端末紛失、マルウェア、画面共有で読まれる可能性があります。"
+  },
+  {
+    q: "Q. ランサムウェア対策でバックアップ以外に必要なことは何ですか？",
+    a: "A. 復旧テスト、権限分離、感染端末の隔離手順、連絡先の明確化です。"
+  },
+  {
+    q: "Q. プロンプトインジェクションとは何ですか？",
+    a: "A. 外部文書やWebページに隠れた命令で、AIに想定外の行動をさせる攻撃です。"
+  }
+];
+
+document.addEventListener('DOMContentLoaded', function() {
+  var quiz = literacyQuestions[Math.floor(Math.random() * literacyQuestions.length)];
+  var questionEl = document.getElementById('quizQuestion');
+  var answerEl = document.getElementById('quizAnswer');
+  var buttonEl = document.getElementById('quizAnswerButton');
+  if (questionEl && answerEl && buttonEl && quiz) {
+    questionEl.textContent = quiz.q;
+    answerEl.innerHTML = '<strong>\u7b54\u3048\uff1a</strong>' + quiz.a.replace(/^A. /, '');
+    buttonEl.addEventListener('click', function() {
+      var isOpen = answerEl.style.display === 'block';
+      answerEl.style.display = isOpen ? 'none' : 'block';
+      buttonEl.textContent = isOpen ? '\u7b54\u3048\u3092\u8868\u793a' : '\u7b54\u3048\u3092\u96a0\u3059';
+    });
+  }
+
+  document.querySelectorAll('h2').forEach(function(h) {
+    if (h.textContent.includes('\u7d50\u8ad6')) {
+      h.style.background = 'linear-gradient(to right, #e8f5e9, transparent)';
+      h.style.borderLeftColor = '#43a047';
+      h.style.color = '#2e7d32';
+    }
+  });
+});
+</script>
+</body>
+</html>

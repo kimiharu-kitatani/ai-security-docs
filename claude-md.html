@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Security Docs</title>
+<style>
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", "Yu Gothic", sans-serif; background: #f5f7fa; color: #333; line-height: 1.7; }
+.header { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); color: white; padding: 24px 20px; text-align: center; }
+.header h1 { font-size: 1.6em; margin-bottom: 6px; }
+.header p { opacity: 0.8; font-size: 0.9em; }
+.tabs { display: flex; background: #1a1a2e; overflow-x: auto; scrollbar-width: thin; scrollbar-color: #3949ab #1a1a2e; }
+.tabs::-webkit-scrollbar { height: 4px; }
+.tabs::-webkit-scrollbar-track { background: #1a1a2e; }
+.tabs::-webkit-scrollbar-thumb { background: #3949ab; border-radius: 2px; }
+.tab-link { flex: none; padding: 14px 16px; color: rgba(255,255,255,0.7); border: none; background: none; cursor: pointer; font-size: 0.82em; font-weight: 600; white-space: nowrap; border-bottom: 3px solid transparent; transition: all 0.2s;  text-decoration: none; display: inline-flex; align-items: center; }
+.tab-link:hover { color: white; background: rgba(255,255,255,0.1); }
+.tab-link.active { color: #64b5f6; border-bottom-color: #64b5f6; background: rgba(100,181,246,0.1); }
+.tab-content { display: block; }
+.content { max-width: 900px; margin: 0 auto; padding: 30px 20px; }
+h1 { font-size: 1.8em; color: #1a237e; margin: 30px 0 15px; padding-bottom: 10px; border-bottom: 3px solid #1a237e; }
+h2 { font-size: 1.4em; color: #283593; margin: 25px 0 12px; padding: 10px 15px; background: linear-gradient(to right, #e8eaf6, transparent); border-left: 4px solid #3949ab; border-radius: 4px; }
+h3 { font-size: 1.15em; color: #3949ab; margin: 20px 0 10px; }
+h4 { font-size: 1em; color: #5c6bc0; margin: 15px 0 8px; }
+p { margin: 10px 0; }
+ul, ol { margin: 10px 0 10px 25px; }
+li { margin: 5px 0; }
+table { width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 0.9em; overflow-x: auto; display: block; }
+th { background: #283593; color: white; padding: 12px; text-align: left; }
+td { padding: 10px 12px; border-bottom: 1px solid #e0e0e0; vertical-align: top; }
+tr:nth-child(even) { background: #f8f9ff; }
+tr:hover { background: #e8eaf6; }
+code { background: #f0f0f0; padding: 2px 6px; border-radius: 3px; font-family: "Courier New", monospace; font-size: 0.88em; color: #d32f2f; }
+pre { background: #1e1e2e; color: #cdd6f4; padding: 20px; border-radius: 8px; overflow-x: auto; margin: 15px 0; line-height: 1.6; }
+pre code { background: none; color: inherit; padding: 0; font-size: 0.9em; }
+blockquote { border-left: 4px solid #7986cb; padding: 12px 20px; background: #f3f4ff; margin: 15px 0; border-radius: 0 8px 8px 0; color: #444; }
+blockquote p { margin: 6px 0; }
+hr { border: none; border-top: 2px solid #e0e0e0; margin: 30px 0; }
+strong { color: #1a237e; }
+a { color: #3949ab; }
+.footer { text-align: center; padding: 16px; color: rgba(255,255,255,0.5); background: #1a1a2e; margin-top: 40px; font-size: 0.8em; }
+.literacy-quiz { background: #fff; border-bottom: 1px solid #dfe3f0; box-shadow: 0 2px 10px rgba(26,35,126,0.08); }
+.literacy-quiz-inner { max-width: 900px; margin: 0 auto; padding: 14px 20px; }
+.literacy-quiz-label { color: #5c6bc0; font-size: 0.78em; font-weight: 700; letter-spacing: 0; margin-bottom: 4px; }
+.literacy-quiz-question { color: #1a237e; font-weight: 700; margin: 0; }
+.literacy-quiz-answer { color: #444; margin: 6px 0 0; font-size: 0.92em;  display: none; }
+.literacy-quiz-answer strong { color: #2e7d32; }
+.quick-links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.quick-link { display: inline-flex; align-items: center; padding: 7px 12px; border: 1px solid #3949ab; border-radius: 6px; color: #3949ab; background: #fff; font-size: 0.86em; font-weight: 700; text-decoration: none; }
+.quick-link:hover { background: #e8eaf6; }
+
+.quiz-answer-button { margin-top: 8px; padding: 7px 12px; border: 1px solid #3949ab; border-radius: 6px; background: #3949ab; color: #fff; font-weight: 700; cursor: pointer; }
+.quiz-answer-button:hover { background: #283593; }
+
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>🛡️ AIエージェント セキュリティドキュメント</h1>
+  <p>AI導入・開発時のセキュリティガイド集 | 2026年版</p>
+</div>
+<div class="tabs">
+  <a class="tab-link" href="security-docs-standalone.html">📋 開発ガイド</a>
+  <a class="tab-link" href="threats.html">⚠️ 脅威一覧</a>
+  <a class="tab-link" href="release-check.html">✅ リリース前チェック</a>
+  <a class="tab-link active" href="claude-md.html">📁 CLAUDE.md設定</a>
+  <a class="tab-link" href="visibility.html">🔐 中級編：誰が何を見るか</a>
+  <a class="tab-link" href="vpn.html">🌐 VPN解説</a>
+  <a class="tab-link" href="public-pc.html">🏙️ 社外でのPC利用</a>
+  <a class="tab-link" href="password-auth.html">🔑 パスワード・認証</a>
+  <a class="tab-link" href="daily-check.html">✅ 日常チェック</a>
+  <a class="tab-link" href="glossary.html">🧠 用語集・会話術</a>
+</div>
+<div class="literacy-quiz" id="literacyQuiz">
+  <div class="literacy-quiz-inner">
+    <div class="literacy-quiz-label">今日のセキュリティ・リテラシーテスト</div>
+    <p class="literacy-quiz-question" id="quizQuestion">Loading...</p>
+    <button class="quiz-answer-button" type="button" id="quizAnswerButton">&#x7B54;&#x3048;&#x3092;&#x8868;&#x793A;</button>
+    <p class="literacy-quiz-answer" id="quizAnswer"></p>
+    <div class="quick-links">
+      <a class="quick-link" href="daily-check.html">✅ 日常チェックリストを見る</a>
+      <a class="quick-link" href="glossary.html">🧠 用語集・会話術を見る</a>
+    </div>
+  </div>
+</div>
+<div class="tab-content" id="tab3"><div class="content"><h1>CLAUDE.md 完全設定ガイド</h1>
+<h2>世界トップエンジニアのベストプラクティス 2026年版</h2>
+<p><strong>出典</strong>：Anthropic 公式ドキュメント / Claude Code セキュリティリサーチ / OWASP MCP Top 10<br />
+<strong>対象</strong>：Claude Code / Cursor / AI エージェントを使って開発しているエンジニア</p>
+<hr />
+<h2>CLAUDE.md とは何か</h2>
+<p>CLAUDE.md は「<strong>AIエージェントへの永続的な指示書</strong>」です。</p>
+<ul>
+<li>セッションを開始するたびに<strong>自動で読み込まれる</strong></li>
+<li>チームで共有できる（git commit）</li>
+<li>AIが「毎回聞かなくてもわかること」を事前に教えておくファイル</li>
+</ul>
+<blockquote>
+<p>Anthropic 公式の推奨：<strong>200行以内</strong>に収める。長すぎると重要な指示が無視される。</p>
+</blockquote>
+<hr />
+<h2>ファイルの種類と配置場所</h2>
+<table>
+<thead>
+<tr>
+<th>ファイル名</th>
+<th>場所</th>
+<th>用途</th>
+<th>Git管理</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>CLAUDE.md</code></td>
+<td>プロジェクトルート</td>
+<td>チーム共通のルール</td>
+<td>✅ commit する</td>
+</tr>
+<tr>
+<td><code>CLAUDE.local.md</code></td>
+<td>プロジェクトルート</td>
+<td>個人の作業設定</td>
+<td>❌ .gitignore に追加</td>
+</tr>
+<tr>
+<td><code>~/.claude/CLAUDE.md</code></td>
+<td>ホームディレクトリ</td>
+<td>全プロジェクト共通</td>
+<td>個人管理</td>
+</tr>
+<tr>
+<td><code>src/CLAUDE.md</code></td>
+<td>サブディレクトリ</td>
+<td>そのフォルダ専用ルール</td>
+<td>✅ commit する</td>
+</tr>
+</tbody>
+</table>
+<h3>インポート機能（他ファイルを参照する）</h3>
+<p>CLAUDE.md から他のファイルを読み込めます：</p>
+<pre><code class="language-markdown"># CLAUDE.md
+@README.md を参照してプロジェクト概要を把握すること。
+利用可能なコマンド一覧は @package.json を確認。
+
+# 詳細ガイド
+- Gitワークフロー: @docs/git-workflow.md
+- APIルール: @docs/api-conventions.md
+</code></pre>
+<hr />
+<h2>書くべきこと・書いてはいけないこと（公式整理）</h2>
+<table>
+<thead>
+<tr>
+<th>✅ 書くべきこと</th>
+<th>❌ 書いてはいけないこと</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ビルド・テスト・リントのコマンド</td>
+<td>APIキー・パスワード・シークレット</td>
+</tr>
+<tr>
+<td>AIが推測できないコードスタイル</td>
+<td>標準的な言語の慣習（AIは知っている）</td>
+</tr>
+<tr>
+<td>テスト実行方法・好みのテストランナー</td>
+<td>詳細なAPIドキュメント（URLを書けばよい）</td>
+</tr>
+<tr>
+<td>ブランチ命名規則・PRの作法</td>
+<td>頻繁に変わる情報</td>
+</tr>
+<tr>
+<td>プロジェクト固有のアーキテクチャ判断</td>
+<td>ファイルごとの詳細説明</td>
+</tr>
+<tr>
+<td>開発環境の特殊な設定・注意点</td>
+<td>「クリーンなコードを書く」など当然のこと</td>
+</tr>
+<tr>
+<td>非自明な動作・ハマりやすいポイント</td>
+<td>.env の値・本番URLの認証情報</td>
+</tr>
+</tbody>
+</table>
+<p><strong>判断基準</strong>：「この行を削除したらAIがミスを犯すか？」→ Noなら削除してよい</p>
+<hr />
+<h2>セキュリティ設定（最重要）</h2>
+<h3>1. セキュリティポリシーを CLAUDE.md に明記する</h3>
+<pre><code class="language-markdown"># セキュリティポリシー（IMPORTANT: 必ず守ること）
+
+## 絶対禁止
+- APIキー・パスワード・シークレットをコードに直書きしない
+- .env ファイルの内容を読んだり、プロンプトに含めない
+- ユーザーの個人情報（氏名・メール・電話）をログに出力しない
+- ユーザー入力をそのままSQLに組み込まない（必ずORMまたはプリペアドステートメント）
+- innerHTML や dangerouslySetInnerHTML にユーザー入力を渡さない
+
+## 必ず行うこと
+- 環境変数は必ず process.env.VARIABLE_NAME で読み込む
+- 新しい外部サービスを追加する場合は .env.example にキー名を追加する
+- APIエンドポイントには必ず認証チェックを入れる
+- ユーザーが自分のデータだけにアクセスできるよう認可チェックを行う
+</code></pre>
+<h3>2. settings.json でファイルアクセスを制限する</h3>
+<p><code>.claude/settings.json</code>（プロジェクト共有）または <code>~/.claude/settings.json</code>（個人設定）に記述：</p>
+<pre><code class="language-json">{
+  &quot;permissions&quot;: {
+    &quot;deny&quot;: [
+      &quot;Read(./.env*)&quot;,
+      &quot;Read(./secrets/*)&quot;,
+      &quot;Read(./.claudeignore)&quot;,
+      &quot;Read(~/.ssh/*)&quot;,
+      &quot;Read(~/.aws/credentials)&quot;,
+      &quot;Bash(curl * | bash)&quot;,
+      &quot;Bash(wget * -O- | sh)&quot;
+    ],
+    &quot;allow&quot;: [
+      &quot;Bash(npm run *)&quot;,
+      &quot;Bash(git *)&quot;,
+      &quot;Bash(npm test)&quot;,
+      &quot;Bash(npm run lint)&quot;
+    ]
+  }
+}
+</code></pre>
+<h3>3. .claudeignore を設定する</h3>
+<pre><code># .claudeignore
+# シークレット系
+.env
+.env.*
+.env.local
+.env.production
+.env.staging
+secrets/
+*.pem
+*.key
+*.p12
+*.pfx
+
+# 認証情報
+.aws/
+.gcp/
+.azure/
+credentials.json
+
+# 機密ドキュメント
+docs/confidential/
+docs/internal/
+</code></pre>
+<hr />
+<h2>実務で使えるCLAUDE.md テンプレート</h2>
+<h3>スタンダード版（チーム開発向け）</h3>
+<pre><code class="language-markdown"># プロジェクト概要
+〇〇のためのWebアプリ。Next.js（フロント）+ Node.js（API）+ PostgreSQL（DB）。
+
+# 主要コマンド
+- 開発サーバー起動: npm run dev
+- テスト実行: npm test（単一ファイル: npm test -- path/to/test）
+- リント: npm run lint
+- ビルド: npm run build
+- DB マイグレーション: npm run migrate
+
+# コードスタイル
+- TypeScript 使用。any は禁止。
+- ESモジュール（import/export）を使用（require は禁止）
+- コンポーネントは関数コンポーネントのみ（クラスコンポーネント禁止）
+- テストは Jest + React Testing Library
+
+# アーキテクチャ
+- src/app/: Next.js App Router のページ
+- src/components/: 再利用可能なUIコンポーネント
+- src/lib/: ユーティリティ・共通ロジック
+- src/ai/: AIエージェント呼び出しの唯一の窓口（ここ以外でSDKを直接呼ばない）
+- src/config/: 環境変数の一元管理（ここ以外で process.env を直接読まない）
+
+# セキュリティポリシー（IMPORTANT）
+- APIキー・パスワードをコードに直書きしない
+- .env ファイルを読んだり内容をプロンプトに含めない
+- ユーザーの個人情報をログに出力しない
+- SQLはORMのみ使用（生SQLを文字列連結で作らない）
+- 認証チェックはすべての /api/ エンドポイントに必須
+- 認可チェック：ユーザーは自分のデータのみアクセス可
+
+# ワークフロー
+- 作業前に必ず git branch で現在のブランチを確認する
+- コミット前に npm run lint &amp;&amp; npm test を実行する
+- PRはmainブランチに向けて作成する
+
+# やってはいけないこと
+- git push --force（明示的に許可された場合のみ）
+- package.json の script を勝手に変更しない
+- 本番環境のDBに直接接続しない
+</code></pre>
+<hr />
+<h2>世界のトップエンジニアが使っている高度な設定</h2>
+<h3>サブエージェント設定（専門家AIを定義する）</h3>
+<p><code>.claude/agents/security-reviewer.md</code> を作成すると、専門家AIをいつでも呼び出せます：</p>
+<pre><code class="language-markdown">---
+name: security-reviewer
+description: コードのセキュリティレビューを行う専門エージェント
+tools: Read, Grep, Glob, Bash
+model: claude-opus-4-8
+---
+あなたはシニアセキュリティエンジニアです。以下の観点でコードを確認してください：
+
+1. インジェクション脆弱性（SQL、XSS、コマンドインジェクション）
+2. 認証・認可の不備
+3. シークレット・認証情報のハードコーディング
+4. 安全でないデータの取り扱い
+5. プロンプトインジェクションのリスク（AIを使う箇所）
+
+問題を発見した場合は、該当ファイルと行番号、修正案を具体的に示してください。
+</code></pre>
+<p>呼び出し方：「security-reviewerを使ってこのPRをレビューして」</p>
+<h3>スキル定義（ワークフローを自動化する）</h3>
+<p><code>.claude/skills/deploy-check/SKILL.md</code> を作成：</p>
+<pre><code class="language-markdown">---
+name: deploy-check
+description: デプロイ前のセキュリティ・品質チェック
+---
+デプロイ前に以下を順番に確認してください：
+
+1. `npm run lint` を実行してエラーがないか確認
+2. `npm test` を実行してすべてのテストが通るか確認
+3. `git grep -r &quot;sk-\|password\|secret&quot; src/` でハードコードされたシークレットがないか確認
+4. .env.example と .env のキーが一致しているか確認
+5. 上記すべてがOKなら「デプロイ準備完了」と報告
+</code></pre>
+<p>呼び出し方：<code>/deploy-check</code></p>
+<h3>フック設定（強制的に実行させる処理）</h3>
+<p><code>.claude/settings.json</code> にフックを設定すると、AIの行動に必ず処理を挟めます：</p>
+<pre><code class="language-json">{
+  &quot;hooks&quot;: {
+    &quot;PostToolUse&quot;: [
+      {
+        &quot;matcher&quot;: &quot;Edit|Write&quot;,
+        &quot;hooks&quot;: [
+          {
+            &quot;type&quot;: &quot;command&quot;,
+            &quot;command&quot;: &quot;npm run lint --silent 2&gt;&amp;1 | head -20&quot;
+          }
+        ]
+      }
+    ]
+  }
+}
+</code></pre>
+<p>これにより、AIがファイルを編集するたびに自動でlintが走ります。</p>
+<hr />
+<h2>CLAUDE.md の育て方</h2>
+<p>CLAUDE.md は一度作って終わりではなく、<strong>コードと同じように育てるもの</strong>です。</p>
+<h3>レビューのタイミング</h3>
+<ul>
+<li>AIが同じミスを繰り返したとき → 対策を追記する</li>
+<li>AIに毎回同じことを伝えているとき → CLAUDE.md に書く</li>
+<li>CLAUDE.md が200行を超えてきたとき → 不要な行を削除する</li>
+</ul>
+<h3>チームでの運用</h3>
+<pre><code class="language-markdown"># CLAUDE.md の更新ルール
+- 追記する前に「これはCLAUDE.mdに必要か？」を考える
+- AIが既にできることは書かない（書くと逆に混乱する）
+- 重要なルールには &quot;IMPORTANT:&quot; を先頭につける
+- 月1回 CLAUDE.md の棚卸しをする（不要な行を削除する）
+</code></pre>
+<hr />
+<h2>よくある間違いと修正方法</h2>
+<table>
+<thead>
+<tr>
+<th>間違い</th>
+<th>症状</th>
+<th>修正</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CLAUDE.md が長すぎる</td>
+<td>重要なルールが無視される</td>
+<td>不要な行を削除。200行以内に抑える</td>
+</tr>
+<tr>
+<td>当然のことを書く</td>
+<td>AIが読み飛ばす</td>
+<td>削除。AIはすでに知っている</td>
+</tr>
+<tr>
+<td>シークレットを書いてしまった</td>
+<td>情報漏洩リスク</td>
+<td>即削除 + git history からも削除</td>
+</tr>
+<tr>
+<td>ルールが曖昧</td>
+<td>AIがルールを解釈違いする</td>
+<td>具体的な例を加える</td>
+</tr>
+<tr>
+<td>更新を怠る</td>
+<td>古いルールでAIが混乱する</td>
+<td>定期的なメンテナンスを習慣化する</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>参考リソース</h2>
+<ul>
+<li><a href="https://code.claude.com/docs/en/best-practices">Anthropic 公式 CLAUDE.md ガイド</a></li>
+<li><a href="https://code.claude.com/docs/en/settings">Claude Code セキュリティ設定</a></li>
+<li><a href="https://www.knostic.ai/blog/claude-loads-secrets-without-permission">.env ファイルと AI エージェントのリスク</a></li>
+<li><a href="https://owasp.org/www-project-top-10-for-large-language-model-applications/">OWASP MCP Top 10</a></li>
+<li><a href="https://github.com/RiyaParikh0112/claude-code-playbook/blob/main/docs/fundamentals/security-best-practices.md">Claude Code セキュリティプレイブック</a></li>
+</ul></div></div>
+<div class="footer">
+  <p>AI&#x30A8;&#x30FC;&#x30B8;&#x30A7;&#x30F3;&#x30C8; &#x30BB;&#x30AD;&#x30E5;&#x30EA;&#x30C6;&#x30A3;&#x30C9;&#x30AD;&#x30E5;&#x30E1;&#x30F3;&#x30C8; v4.0 | 2026&#x5E74;&#x7248;</p>
+</div>
+<script>
+var literacyQuestions = [
+  {
+    q: "Q. VPNで守れるものと、守れないものは何ですか？",
+    a: "A. 守れるのは通信経路。AIやSaaSに送った内容、偽ログイン画面への入力、端末感染は別対策が必要です。"
+  },
+  {
+    q: "Q. 最小権限とは何ですか？",
+    a: "A. 必要な人に、必要な範囲だけ権限を渡す考え方です。全員管理者を避けます。"
+  },
+  {
+    q: "Q. MFAを入れても残るリスクは何ですか？",
+    a: "A. 端末乗っ取り、セッションCookie窃取、MFA疲労攻撃、復旧メールの乗っ取りなどです。"
+  },
+  {
+    q: "Q. 共有アカウントの一番の問題は何ですか？",
+    a: "A. 誰が操作したか追えず、退職者や外注先のアクセス停止も曖昧になることです。"
+  },
+  {
+    q: "Q. AI導入時に最初に分類すべき情報は何ですか？",
+    a: "A. AIに送ってよい情報、マスキングすればよい情報、絶対に送らない情報の3分類です。"
+  },
+  {
+    q: "Q. フリーWi-FiでSSID確認が必要な理由は何ですか？",
+    a: "A. Evil Twinのように本物と同名・類似名の偽Wi-Fiへ接続する可能性があるためです。"
+  },
+  {
+    q: "Q. 監査ログで最低限見たい項目は何ですか？",
+    a: "A. 誰が、いつ、どこから、何にアクセスし、何を変更したかです。"
+  },
+  {
+    q: "Q. .envをGitに入れなければ安全と言えますか？",
+    a: "A. 言えません。AIエージェント、端末紛失、マルウェア、画面共有で読まれる可能性があります。"
+  },
+  {
+    q: "Q. ランサムウェア対策でバックアップ以外に必要なことは何ですか？",
+    a: "A. 復旧テスト、権限分離、感染端末の隔離手順、連絡先の明確化です。"
+  },
+  {
+    q: "Q. プロンプトインジェクションとは何ですか？",
+    a: "A. 外部文書やWebページに隠れた命令で、AIに想定外の行動をさせる攻撃です。"
+  }
+];
+
+document.addEventListener('DOMContentLoaded', function() {
+  var quiz = literacyQuestions[Math.floor(Math.random() * literacyQuestions.length)];
+  var questionEl = document.getElementById('quizQuestion');
+  var answerEl = document.getElementById('quizAnswer');
+  var buttonEl = document.getElementById('quizAnswerButton');
+  if (questionEl && answerEl && buttonEl && quiz) {
+    questionEl.textContent = quiz.q;
+    answerEl.innerHTML = '<strong>\u7b54\u3048\uff1a</strong>' + quiz.a.replace(/^A. /, '');
+    buttonEl.addEventListener('click', function() {
+      var isOpen = answerEl.style.display === 'block';
+      answerEl.style.display = isOpen ? 'none' : 'block';
+      buttonEl.textContent = isOpen ? '\u7b54\u3048\u3092\u8868\u793a' : '\u7b54\u3048\u3092\u96a0\u3059';
+    });
+  }
+
+  document.querySelectorAll('h2').forEach(function(h) {
+    if (h.textContent.includes('\u7d50\u8ad6')) {
+      h.style.background = 'linear-gradient(to right, #e8f5e9, transparent)';
+      h.style.borderLeftColor = '#43a047';
+      h.style.color = '#2e7d32';
+    }
+  });
+});
+</script>
+</body>
+</html>
