@@ -78,6 +78,7 @@ a { color: #3949ab; }
     <div class="literacy-quiz-label">今日のセキュリティ・リテラシーテスト</div>
     <p class="literacy-quiz-question" id="quizQuestion">Loading...</p>
     <button class="quiz-answer-button" type="button" id="quizAnswerButton">&#x7B54;&#x3048;&#x3092;&#x8868;&#x793A;</button>
+    <button class="quiz-answer-button" type="button" id="quizNextButton">?????</button>
     <p class="literacy-quiz-answer" id="quizAnswer"></p>
     <div class="quick-links">
       <a class="quick-link" href="daily-check.html">✅ 日常チェックリストを見る</a>
@@ -612,14 +613,39 @@ document.addEventListener('DOMContentLoaded', function() {
   var questionEl = document.getElementById('quizQuestion');
   var answerEl = document.getElementById('quizAnswer');
   var buttonEl = document.getElementById('quizAnswerButton');
-  if (questionEl && answerEl && buttonEl && quiz) {
+  var nextButtonEl = document.getElementById('quizNextButton');
+  var currentQuizIndex = -1;
+  function pickQuiz() {
+    if (!literacyQuestions.length) return null;
+    if (literacyQuestions.length === 1) {
+      currentQuizIndex = 0;
+      return literacyQuestions[0];
+    }
+    var nextIndex = currentQuizIndex;
+    while (nextIndex === currentQuizIndex) {
+      nextIndex = Math.floor(Math.random() * literacyQuestions.length);
+    }
+    currentQuizIndex = nextIndex;
+    return literacyQuestions[currentQuizIndex];
+  }
+  function renderQuiz() {
+    quiz = pickQuiz();
+    if (!quiz) return;
     questionEl.textContent = quiz.q;
     answerEl.innerHTML = '<strong>\u7b54\u3048\uff1a</strong>' + quiz.a.replace(/^A. /, '');
+    answerEl.style.display = 'none';
+    buttonEl.textContent = '\u7b54\u3048\u3092\u8868\u793a';
+  }
+  if (questionEl && answerEl && buttonEl && quiz) {
+    renderQuiz();
     buttonEl.addEventListener('click', function() {
       var isOpen = answerEl.style.display === 'block';
       answerEl.style.display = isOpen ? 'none' : 'block';
       buttonEl.textContent = isOpen ? '\u7b54\u3048\u3092\u8868\u793a' : '\u7b54\u3048\u3092\u96a0\u3059';
     });
+    if (nextButtonEl) {
+      nextButtonEl.addEventListener('click', renderQuiz);
+    }
   }
 
   document.querySelectorAll('h2').forEach(function(h) {
