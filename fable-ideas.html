@@ -95,169 +95,76 @@ a { color: #3949ab; }
 <div class="tab-content" id="tab11"><div class="content"><h1>Claude Fable 5 活用アイデア集</h1>
 <p><strong>対象</strong>：Claude CodeでAI導入支援・業務効率化に取り組んでいる方<br />
 <strong>形式</strong>：期間限定の最上位モデルを最大限に活かすための、優先度付きアイデア集</p>
-<p>出典について：本文中の<span class="source-tag source-official">公式</span>はAnthropic公式発表で確認できた事実、<span class="source-tag source-estimate">報道</span>は複数の報道記事で確認できた情報、<span class="source-tag source-unknown">推定</span>は一般論・経験則です。</p>
+<p>出典について：本文中の<span class="source-tag source-official">公式</span>はAnthropic公式発表で確認できた事実、<span class="source-tag source-unknown">推定</span>は一般論・経験則です。</p>
+<p>Fable 5は現在提供されている中で最も知能の高いクラスのモデルです<span class="source-tag source-official">公式</span>。期間限定で使える間に、優先度の高いタスクへ集中投下しましょう。</p>
 <hr />
 
-<h1>STEP 1｜Fable 5とは？ いつまで使える？</h1>
-<hr />
-<h2>🔍 Fable 5の位置づけ</h2>
-<ul>
-<li>Claude Fable 5は、Anthropicの新しい<strong>Claude 5ファミリーの最初のモデル</strong>で、従来の最上位だったOpusよりさらに上位の「Mythosクラス」に属する、一般提供されている中で最も知能の高いモデルです。<span class="source-tag source-official">公式</span></li>
-<li>普段使いのSonnet/Opusと同じ感覚で使えますが、<strong>複雑な設計判断・長い多段タスク・難しい読み取り</strong>で特に差が出ます。<span class="source-tag source-unknown">推定</span></li>
-</ul>
-<hr />
-<h2>⏰ 提供期間（重要）</h2>
-<table>
-<thead>
-<tr>
-<th>項目</th>
-<th>内容</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>期限</td>
-<td>太平洋時間 2026年7月12日 23:59:59 まで（<strong>日本時間 7月13日 15:59:59 まで</strong>）に延長<span class="source-tag source-estimate">報道</span></td>
-</tr>
-<tr>
-<td>対象プラン</td>
-<td>Pro / Max / Team、Enterpriseのプレミアムシート（組織側で有効化時）<span class="source-tag source-estimate">報道</span></td>
-</tr>
-<tr>
-<td>利用上限</td>
-<td>週間利用上限の<strong>最大50%分</strong>まで追加費用なし。申請・有効化操作は不要<span class="source-tag source-estimate">報道</span></td>
-</tr>
-<tr>
-<td>Claude Codeでの利用条件</td>
-<td><strong>v2.1.170以降</strong>が必要（古いバージョンでは選択肢に出ない）<span class="source-tag source-estimate">報道</span></td>
-</tr>
-<tr>
-<td>期限後</td>
-<td>サブスクでのプロモ提供は終了。継続利用は利用クレジットまたはAPI経由（通常レート課金）<span class="source-tag source-estimate">報道</span></td>
-</tr>
-</tbody>
-</table>
-<hr />
-<h2>📌 STEP 1 の結論</h2>
-<blockquote>
-<p><strong>残り期間は限られています。「なんでもFableでやる」のではなく、「Fableにしかできないこと・Fableで一番差が出ること」に集中投下するのが正解です。</strong><br />
-次のSTEPで「何に使うと一番得か」を整理します。</p>
-</blockquote>
-<h2>---</h2>
-
-<h1>STEP 2｜使い分けの基本方針</h1>
-<hr />
-<h2>🔍 モデルの役割分担</h2>
-<table>
-<thead>
-<tr>
-<th>タスクのタイプ</th>
-<th>推奨モデル</th>
-<th>理由</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>設計・計画・要件整理・難しい判断</td>
-<td><strong>Fable 5</strong></td>
-<td>知能の差が最も出る領域。間違えると後工程全部に響く</td>
-</tr>
-<tr>
-<td>複雑な資料の読み取り・分析</td>
-<td><strong>Fable 5</strong></td>
-<td>読み落とし・誤読のコストが高い</td>
-</tr>
-<tr>
-<td>成果物の最終レビュー</td>
-<td><strong>Fable 5</strong></td>
-<td>他のモデルが作ったものの穴を見つけやすい</td>
-</tr>
-<tr>
-<td>実装の主力作業</td>
-<td>Sonnet / Opus</td>
-<td>十分な品質でコスト・上限にやさしい</td>
-</tr>
-<tr>
-<td>定型作業・量産</td>
-<td>Haiku / Composer等の軽量モデル</td>
-<td>速くて安い。設計が固まっていれば十分</td>
-</tr>
-</tbody>
-</table>
-<blockquote>
-<p><strong>一言で言うと：Fable＝指揮官・設計者・レビュアー、他モデル＝実働部隊。</strong><br />
-複数のAIエージェントを並行運用しているなら、この分担が一番効きます。<span class="source-tag source-unknown">推定</span></p>
-</blockquote>
-<hr />
-<h2>📌 STEP 2 の結論</h2>
-<blockquote>
-<p><strong>「作業させる」より「考えさせる・設計させる・レビューさせる」に使うと、週次上限50%の枠を最も有効に使えます。</strong></p>
-</blockquote>
-<h2>---</h2>
-
-<h1>STEP 3｜活用アイデア10選（優先度付き）</h1>
+<h1>活用アイデア（優先度付き）</h1>
 <hr />
 <h2>🔴 優先度・高：期間内にぜひやりたい</h2>
-<h3>① 一番難しくて塩漬けになっている課題をぶつける</h3>
+<h3>① 全プロジェクトの棚卸し・振り返り</h3>
+<p>複数の案件を並行で進めていると、各プロジェクトでどんな意思決定をして、何がうまくいって、何が滞っているかを振り返る時間がなかなか取れません。Fableのような高い読解力・要約力を持つモデルは、この「横断的な棚卸し」に最も向いています。<br />
+過去のミーティング議事録・チャット履歴・作業メモをMarkdownファイルとして整理し、それをまとめて読み込ませて振り返らせるのが具体的な進め方です。</p>
+<h4>具体的なプロンプト例</h4>
+<pre><code>1. 「これまでの◯◯プロジェクトの議事録・チャット履歴をすべて読み込んで、
+   時系列で意思決定とその理由を1本のMarkdownファイルにまとめてください」
+
+2. 「各プロジェクトフォルダにあるMarkdownメモを横断的に読んで、
+   重複している内容・古くなった情報・まだ整理されていない論点を
+   洗い出してください」
+
+3. 「プロジェクトごとに『目的・現状・次にやること・注意点』の4項目で
+   1ページに要約したサマリーをMDファイルとして作成してください」
+
+4. 「全プロジェクトを振り返って、共通してうまくいっているパターンと、
+   毎回つまずいているパターンをそれぞれ3つずつ挙げてください」
+</code></pre>
+<p><strong>ポイント</strong>：振り返りの成果物（サマリーMD・棚卸しリスト）はそのままファイルとして残しておけば、期間終了後も「プロジェクトの共有知」として使い続けられます。Markdownでの資料整理は、複数人・複数AIエージェントで同じプロジェクトに関わる場合の土台にもなります。</p>
+<h3>② 一番難しくて塩漬けになっている課題をぶつける</h3>
 <p>普段のモデルでは歯が立たなかった「いつかやりたい」案件の実現可能性検証に最適です。<br />
 例：<strong>図面・仕様書のPDFから数量を拾い出して見積もりドラフトを自動生成する</strong>（建設・製造業支援の定番の難題）。期間内にプロトタイプを1本作り、「どこまでできて、どこからが人間の仕事か」の線引きを見極めておくと、期間後の提案にも使えます。</p>
-<h3>② 業務パイプラインの「設計書」を作らせる</h3>
+<h3>③ 業務パイプラインの「設計書」を作らせる</h3>
 <p>例：補助金・助成金申請サポートの書類自動生成。過去の申請書類を読み込ませ、「必要な情報項目の洗い出し → ヒアリングフォームの設計 → 顧客データベースからの転記自動化」という<strong>全体設計をFableに書かせます</strong>。<br />
 設計ドキュメントは<strong>期間終了後もそのまま資産として残り</strong>、実装は通常モデルで進められます。</p>
-<h3>③ 顧客マスターデータベースの設計レビュー</h3>
+<h3>④ 顧客マスターデータベースの設計レビュー</h3>
 <p>Notion等で「1顧客1ページ」型の顧客DBを作る場合、既存書類からどの項目を持たせるべきかの抽出と、スキーマ設計の妥当性チェックをFableにやらせます。<strong>DB設計は後から変えにくいので、一番賢いモデルでレビューしておく価値が高い</strong>領域です。</p>
 <hr />
 <h2>🟡 優先度・中：余裕があれば</h2>
-<h3>④ 大規模改修の「プランモード」活用</h3>
+<h3>⑤ 大規模改修の「プランモード」活用</h3>
 <p>例：分析ダッシュボードを店舗別ドリルダウン対応に刷新するような大掛かりな改修。<strong>計画立案（プランモード）だけFableでやり、承認後の実装は通常モデルに切り替える</strong>と上限を節約しながら品質を確保できます。</p>
-<h3>⑤ 非構造データ→構造化のワークフロー設計</h3>
+<h3>⑥ 非構造データ→構造化のワークフロー設計</h3>
 <p>現場写真の自動分類・リネーム、作業動画からの手順書・チェックリスト生成など。「どういう分類ルール・命名規則・出力フォーマットにするか」の設計をFableに任せ、運用は軽量モデルへ。</p>
-<h3>⑥ マルチエージェント運用の「レビュー役」</h3>
+<h3>⑦ マルチエージェント運用の「レビュー役」</h3>
 <p>複数のAIエージェントを並行で走らせている場合、<strong>他のモデルが作ったコード・資料をFableにレビューさせる</strong>使い方が有効です。並行運用では「成果物のすり合わせ・整合性チェック」が人間側のボトルネックになりがちなので、そこを最上位モデルに担わせます。</p>
-<h3>⑦ CLAUDE.md・スキル・プロンプト資産の棚卸し</h3>
+<h3>⑧ CLAUDE.md・スキル・プロンプト資産の棚卸し</h3>
 <p>今使っているCLAUDE.md、スキル、プロンプトテンプレートを全部見せて「改善提案を出して」と依頼します。<strong>改善されたプロンプト資産は期間後もずっと効き続ける</strong>、費用対効果の高い使い方です。</p>
 <hr />
 <h2>🟢 優先度・学び：体感しておくと今後に活きる</h2>
-<h3>⑧ 同じタスクを通常モデルとFableに投げて差分を体感する</h3>
+<h3>⑨ 同じタスクを通常モデルとFableに投げて差分を体感する</h3>
 <p>自分の実業務のタスクで比較すると、「この種の仕事は上位モデルに払う価値がある/ない」という<strong>自分なりのモデル使い分け基準</strong>が作れます。期間後のAPI課金判断の材料にもなります。</p>
-<h3>⑨ セキュリティ・権限設計の相談相手にする</h3>
+<h3>⑩ セキュリティ・権限設計の相談相手にする</h3>
 <p>外部から受け取るファイルの処理やメール自動化には、プロンプトインジェクション等のリスクが伴います。<strong>「この自動化ワークフローの危険な穴はどこか」をFableに監査させる</strong>のは、高い判断力が要る領域なので好相性です。詳しくは本サイトの「開発ガイド」「脅威一覧」タブも参照してください。</p>
-<h3>⑩ クライアント提案書の壁打ち</h3>
+<h3>⑪ クライアント提案書の壁打ち</h3>
 <p>AI導入提案の論点整理・リスクの洗い出し・想定問答づくり。提案の「抜け」を見つける力は上位モデルほど強い傾向があります。<span class="source-tag source-unknown">推定</span></p>
 <hr />
-<h2>📌 STEP 3 の結論</h2>
+<h2>📌 まとめ</h2>
 <blockquote>
-<p><strong>迷ったら「①塩漬けの難題」と「②設計書づくり」から。</strong><br />
-どちらも期間が終わった後に成果が残る使い方です。</p>
+<p><strong>迷ったら「①全プロジェクトの棚卸し・振り返り」と「③業務パイプラインの設計書づくり」から。</strong><br />
+どちらも期間が終わった後もファイルとして成果が残る使い方です。</p>
 </blockquote>
-<h2>---</h2>
-
-<h1>STEP 4｜進め方のコツと注意点</h1>
 <hr />
+<h2>✅ チェックリスト</h2>
 <ul>
-<li><strong>上限管理</strong>：週間上限の50%が上限です。大事なタスクから使い、残量を意識しましょう。</li>
-<li><strong>プランモードとの組み合わせ</strong>：Fableに計画を立てさせ、承認後の実装は下位モデルへ切り替えるのが最も効率的です。</li>
-<li><strong>成果物は必ずファイルに残す</strong>：設計書・手順書・プロンプト集など、会話の中に置いたままにせずMarkdown等で保存しておくと期間後も資産になります。</li>
-<li><strong>機密データの扱いは通常どおり</strong>：モデルが強力でも、顧客の個人情報・APIキー等を渡さない原則は変わりません（「開発ガイド」タブ参照）。</li>
-<li><strong>バージョン確認</strong>：Claude Codeはv2.1.170以降にアップデートしてから試してください。<span class="source-tag source-estimate">報道</span></li>
-</ul>
-<hr />
-<h2>✅ 期間内チェックリスト</h2>
-<ul>
-<li>[ ] Claude Codeをv2.1.170以降にアップデートした</li>
+<li>[ ] 過去プロジェクトの振り返り・Markdown整理を1件実施した</li>
 <li>[ ] 塩漬けになっていた一番難しい課題を1つ選び、Fableで実現可能性を検証した</li>
 <li>[ ] 進行中プロジェクトの全体設計書をFableに書かせて保存した</li>
 <li>[ ] CLAUDE.md・プロンプト資産の改善提案をもらった</li>
 <li>[ ] 通常モデルとの差分を自分の業務タスクで体感した</li>
-<li>[ ] 期間後に上位モデルへ課金する価値があるか、自分なりの判断基準を持てた</li>
 </ul>
 <hr />
 <h2>出典一覧</h2>
 <ul>
 <li><span class="source-tag source-official">公式</span> Anthropic：Claude Fable 5 / Mythos 5 発表 — https://www.anthropic.com/news/claude-fable-5-mythos-5</li>
-<li><span class="source-tag source-estimate">報道</span> テクノエッジ：プロモ提供延長（7月13日16時まで） — https://www.techno-edge.net/article/2026/07/08/5268.html</li>
-<li><span class="source-tag source-estimate">報道</span> ITmedia：サブスク提供の延長 — https://www.itmedia.co.jp/aiplus/article/2607/08/2000000167/</li>
-<li><span class="source-tag source-estimate">報道</span> 窓の杜：全有料プランでお試し期間延長 — https://forest.watch.impress.co.jp/docs/news/2123273.html</li>
 </ul>
 <hr />
 <p><em>提供期間・条件は変更される可能性があります。実際に利用する際はAnthropic公式の最新情報を確認してください。</em></p></div></div>
