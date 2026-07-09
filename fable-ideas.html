@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AIエージェント活用ドキュメント</title>
+<style>
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", "Yu Gothic", sans-serif; background: #f5f7fa; color: #333; line-height: 1.7; }
+.header { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); color: white; padding: 24px 20px; text-align: center; }
+.header h1 { font-size: 2.1em; font-weight: 700; letter-spacing: 0.02em; margin-bottom: 8px; }
+.header p { opacity: 0.8; font-size: 0.9em; }
+.tabs { display: flex; background: #1a1a2e; overflow-x: auto; scrollbar-width: thin; scrollbar-color: #3949ab #1a1a2e; }
+.tabs::-webkit-scrollbar { height: 4px; }
+.tabs::-webkit-scrollbar-track { background: #1a1a2e; }
+.tabs::-webkit-scrollbar-thumb { background: #3949ab; border-radius: 2px; }
+.tab-link { flex: none; padding: 14px 16px; color: rgba(255,255,255,0.7); border: none; background: none; cursor: pointer; font-size: 0.82em; font-weight: 600; white-space: nowrap; border-bottom: 3px solid transparent; transition: all 0.2s;  text-decoration: none; display: inline-flex; align-items: center; }
+.tab-link:hover { color: white; background: rgba(255,255,255,0.1); }
+.tab-link.active { color: #64b5f6; border-bottom-color: #64b5f6; background: rgba(100,181,246,0.1); }
+.tab-content { display: block; }
+.content { max-width: 900px; margin: 0 auto; padding: 30px 20px; }
+h1 { font-size: 1.8em; color: #1a237e; margin: 30px 0 15px; padding-bottom: 10px; border-bottom: 3px solid #1a237e; }
+h2 { font-size: 1.4em; color: #283593; margin: 25px 0 12px; padding: 10px 15px; background: linear-gradient(to right, #e8eaf6, transparent); border-left: 4px solid #3949ab; border-radius: 4px; }
+h3 { font-size: 1.15em; color: #3949ab; margin: 20px 0 10px; }
+h4 { font-size: 1em; color: #5c6bc0; margin: 15px 0 8px; }
+p { margin: 10px 0; }
+ul, ol { margin: 10px 0 10px 25px; }
+li { margin: 5px 0; }
+table { width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 0.9em; overflow-x: auto; display: block; }
+th { background: #283593; color: white; padding: 12px; text-align: left; }
+td { padding: 10px 12px; border-bottom: 1px solid #e0e0e0; vertical-align: top; }
+tr:nth-child(even) { background: #f8f9ff; }
+tr:hover { background: #e8eaf6; }
+code { background: #f0f0f0; padding: 2px 6px; border-radius: 3px; font-family: "Courier New", monospace; font-size: 0.88em; color: #d32f2f; }
+pre { background: #1e1e2e; color: #cdd6f4; padding: 20px; border-radius: 8px; overflow-x: auto; margin: 15px 0; line-height: 1.6; }
+pre code { background: none; color: inherit; padding: 0; font-size: 0.9em; }
+blockquote { border-left: 4px solid #7986cb; padding: 12px 20px; background: #f3f4ff; margin: 15px 0; border-radius: 0 8px 8px 0; color: #444; }
+blockquote p { margin: 6px 0; }
+hr { border: none; border-top: 2px solid #e0e0e0; margin: 30px 0; }
+strong { color: #1a237e; }
+a { color: #3949ab; }
+.footer { text-align: center; padding: 16px; color: rgba(255,255,255,0.5); background: #1a1a2e; margin-top: 40px; font-size: 0.8em; }
+.literacy-quiz { background: #fff; border-bottom: 1px solid #dfe3f0; box-shadow: 0 2px 10px rgba(26,35,126,0.08); }
+.literacy-quiz-inner { max-width: 900px; margin: 0 auto; padding: 14px 20px; }
+.literacy-quiz-label { color: #5c6bc0; font-size: 0.78em; font-weight: 700; letter-spacing: 0; margin-bottom: 4px; }
+.literacy-quiz-question { color: #1a237e; font-weight: 700; margin: 0; }
+.literacy-quiz-answer { color: #444; margin: 6px 0 0; font-size: 0.92em;  display: none; }
+.literacy-quiz-answer strong { color: #2e7d32; }
+.quick-links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.quick-link { display: inline-flex; align-items: center; padding: 7px 12px; border: 1px solid #3949ab; border-radius: 6px; color: #3949ab; background: #fff; font-size: 0.86em; font-weight: 700; text-decoration: none; }
+.quick-link:hover { background: #e8eaf6; }
+
+.quiz-answer-button { margin-top: 8px; padding: 7px 12px; border: 1px solid #3949ab; border-radius: 6px; background: #3949ab; color: #fff; font-weight: 700; cursor: pointer; }
+.quiz-answer-button:hover { background: #283593; }
+
+.source-tag { display: inline-block; font-size: 0.78em; font-weight: 700; padding: 2px 8px; border-radius: 10px; margin-left: 6px; }
+.source-official { background: #e3f2fd; color: #1565c0; }
+.source-estimate { background: #fff3e0; color: #e65100; }
+.source-forum { background: #f3e5f5; color: #6a1b9a; }
+.source-unknown { background: #eeeeee; color: #616161; }
+
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>🛡️ AIエージェント活用ドキュメント</h1>
+  <p>AI導入・運用サポート資料集 | 2026年版</p>
+</div>
+<div class="tabs">
+  <a class="tab-link" href="security-docs-standalone.html">📋 開発ガイド</a>
+  <a class="tab-link" href="threats.html">⚠️ 脅威一覧</a>
+  <a class="tab-link" href="release-check.html">✅ リリース前チェック</a>
+  <a class="tab-link" href="claude-md.html">📁 CLAUDE.md設定</a>
+  <a class="tab-link" href="visibility.html">🔐 中級編：誰が何を見るか</a>
+  <a class="tab-link" href="vpn.html">🌐 VPN解説</a>
+  <a class="tab-link" href="public-pc.html">🏙️ 社外でのPC利用</a>
+  <a class="tab-link" href="password-auth.html">🔑 パスワード・認証</a>
+  <a class="tab-link" href="daily-check.html">✅ 日常チェック</a>
+  <a class="tab-link" href="glossary.html">🧠 用語集・会話術</a>
+  <a class="tab-link" href="cursor-agent-mode.html">🖱️ Cursor活用ガイド</a>
+  <a class="tab-link active" href="fable-ideas.html">✨ Fable活用アイデア</a>
+  <a class="tab-link" href="github-guide.html">🐙 GitHub入門</a>
+</div>
+<div class="literacy-quiz" id="literacyQuiz">
+  <div class="literacy-quiz-inner">
+    <div class="literacy-quiz-label">今日のセキュリティ・リテラシーテスト</div>
+    <p class="literacy-quiz-question" id="quizQuestion">Loading...</p>
+    <button class="quiz-answer-button" type="button" id="quizAnswerButton">&#x7B54;&#x3048;&#x3092;&#x8868;&#x793A;</button>
+    <button class="quiz-answer-button" type="button" id="quizNextButton">&#x6B21;&#x306E;&#x30AF;&#x30A4;&#x30BA;</button>
+    <p class="literacy-quiz-answer" id="quizAnswer"></p>
+    <div class="quick-links">
+      <a class="quick-link" href="daily-check.html">✅ 日常チェックリストを見る</a>
+      <a class="quick-link" href="glossary.html">🧠 用語集・会話術を見る</a>
+    </div>
+  </div>
+</div>
+<div class="tab-content" id="tab11"><div class="content"><h1>Claude Fable 5 活用アイデア集</h1>
+<p><strong>対象</strong>：Claude CodeでAI導入支援・業務効率化に取り組んでいる方<br />
+<strong>形式</strong>：期間限定の最上位モデルを最大限に活かすための、優先度付きアイデア集</p>
+<p>出典について：本文中の<span class="source-tag source-official">公式</span>はAnthropic公式発表で確認できた事実、<span class="source-tag source-estimate">報道</span>は複数の報道記事で確認できた情報、<span class="source-tag source-unknown">推定</span>は一般論・経験則です。</p>
+<hr />
+
+<h1>STEP 1｜Fable 5とは？ いつまで使える？</h1>
+<hr />
+<h2>🔍 Fable 5の位置づけ</h2>
+<ul>
+<li>Claude Fable 5は、Anthropicの新しい<strong>Claude 5ファミリーの最初のモデル</strong>で、従来の最上位だったOpusよりさらに上位の「Mythosクラス」に属する、一般提供されている中で最も知能の高いモデルです。<span class="source-tag source-official">公式</span></li>
+<li>普段使いのSonnet/Opusと同じ感覚で使えますが、<strong>複雑な設計判断・長い多段タスク・難しい読み取り</strong>で特に差が出ます。<span class="source-tag source-unknown">推定</span></li>
+</ul>
+<hr />
+<h2>⏰ 提供期間（重要）</h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>期限</td>
+<td>太平洋時間 2026年7月12日 23:59:59 まで（<strong>日本時間 7月13日 15:59:59 まで</strong>）に延長<span class="source-tag source-estimate">報道</span></td>
+</tr>
+<tr>
+<td>対象プラン</td>
+<td>Pro / Max / Team、Enterpriseのプレミアムシート（組織側で有効化時）<span class="source-tag source-estimate">報道</span></td>
+</tr>
+<tr>
+<td>利用上限</td>
+<td>週間利用上限の<strong>最大50%分</strong>まで追加費用なし。申請・有効化操作は不要<span class="source-tag source-estimate">報道</span></td>
+</tr>
+<tr>
+<td>Claude Codeでの利用条件</td>
+<td><strong>v2.1.170以降</strong>が必要（古いバージョンでは選択肢に出ない）<span class="source-tag source-estimate">報道</span></td>
+</tr>
+<tr>
+<td>期限後</td>
+<td>サブスクでのプロモ提供は終了。継続利用は利用クレジットまたはAPI経由（通常レート課金）<span class="source-tag source-estimate">報道</span></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>📌 STEP 1 の結論</h2>
+<blockquote>
+<p><strong>残り期間は限られています。「なんでもFableでやる」のではなく、「Fableにしかできないこと・Fableで一番差が出ること」に集中投下するのが正解です。</strong><br />
+次のSTEPで「何に使うと一番得か」を整理します。</p>
+</blockquote>
+<h2>---</h2>
+
+<h1>STEP 2｜使い分けの基本方針</h1>
+<hr />
+<h2>🔍 モデルの役割分担</h2>
+<table>
+<thead>
+<tr>
+<th>タスクのタイプ</th>
+<th>推奨モデル</th>
+<th>理由</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>設計・計画・要件整理・難しい判断</td>
+<td><strong>Fable 5</strong></td>
+<td>知能の差が最も出る領域。間違えると後工程全部に響く</td>
+</tr>
+<tr>
+<td>複雑な資料の読み取り・分析</td>
+<td><strong>Fable 5</strong></td>
+<td>読み落とし・誤読のコストが高い</td>
+</tr>
+<tr>
+<td>成果物の最終レビュー</td>
+<td><strong>Fable 5</strong></td>
+<td>他のモデルが作ったものの穴を見つけやすい</td>
+</tr>
+<tr>
+<td>実装の主力作業</td>
+<td>Sonnet / Opus</td>
+<td>十分な品質でコスト・上限にやさしい</td>
+</tr>
+<tr>
+<td>定型作業・量産</td>
+<td>Haiku / Composer等の軽量モデル</td>
+<td>速くて安い。設計が固まっていれば十分</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>一言で言うと：Fable＝指揮官・設計者・レビュアー、他モデル＝実働部隊。</strong><br />
+複数のAIエージェントを並行運用しているなら、この分担が一番効きます。<span class="source-tag source-unknown">推定</span></p>
+</blockquote>
+<hr />
+<h2>📌 STEP 2 の結論</h2>
+<blockquote>
+<p><strong>「作業させる」より「考えさせる・設計させる・レビューさせる」に使うと、週次上限50%の枠を最も有効に使えます。</strong></p>
+</blockquote>
+<h2>---</h2>
+
+<h1>STEP 3｜活用アイデア10選（優先度付き）</h1>
+<hr />
+<h2>🔴 優先度・高：期間内にぜひやりたい</h2>
+<h3>① 一番難しくて塩漬けになっている課題をぶつける</h3>
+<p>普段のモデルでは歯が立たなかった「いつかやりたい」案件の実現可能性検証に最適です。<br />
+例：<strong>図面・仕様書のPDFから数量を拾い出して見積もりドラフトを自動生成する</strong>（建設・製造業支援の定番の難題）。期間内にプロトタイプを1本作り、「どこまでできて、どこからが人間の仕事か」の線引きを見極めておくと、期間後の提案にも使えます。</p>
+<h3>② 業務パイプラインの「設計書」を作らせる</h3>
+<p>例：補助金・助成金申請サポートの書類自動生成。過去の申請書類を読み込ませ、「必要な情報項目の洗い出し → ヒアリングフォームの設計 → 顧客データベースからの転記自動化」という<strong>全体設計をFableに書かせます</strong>。<br />
+設計ドキュメントは<strong>期間終了後もそのまま資産として残り</strong>、実装は通常モデルで進められます。</p>
+<h3>③ 顧客マスターデータベースの設計レビュー</h3>
+<p>Notion等で「1顧客1ページ」型の顧客DBを作る場合、既存書類からどの項目を持たせるべきかの抽出と、スキーマ設計の妥当性チェックをFableにやらせます。<strong>DB設計は後から変えにくいので、一番賢いモデルでレビューしておく価値が高い</strong>領域です。</p>
+<hr />
+<h2>🟡 優先度・中：余裕があれば</h2>
+<h3>④ 大規模改修の「プランモード」活用</h3>
+<p>例：分析ダッシュボードを店舗別ドリルダウン対応に刷新するような大掛かりな改修。<strong>計画立案（プランモード）だけFableでやり、承認後の実装は通常モデルに切り替える</strong>と上限を節約しながら品質を確保できます。</p>
+<h3>⑤ 非構造データ→構造化のワークフロー設計</h3>
+<p>現場写真の自動分類・リネーム、作業動画からの手順書・チェックリスト生成など。「どういう分類ルール・命名規則・出力フォーマットにするか」の設計をFableに任せ、運用は軽量モデルへ。</p>
+<h3>⑥ マルチエージェント運用の「レビュー役」</h3>
+<p>複数のAIエージェントを並行で走らせている場合、<strong>他のモデルが作ったコード・資料をFableにレビューさせる</strong>使い方が有効です。並行運用では「成果物のすり合わせ・整合性チェック」が人間側のボトルネックになりがちなので、そこを最上位モデルに担わせます。</p>
+<h3>⑦ CLAUDE.md・スキル・プロンプト資産の棚卸し</h3>
+<p>今使っているCLAUDE.md、スキル、プロンプトテンプレートを全部見せて「改善提案を出して」と依頼します。<strong>改善されたプロンプト資産は期間後もずっと効き続ける</strong>、費用対効果の高い使い方です。</p>
+<hr />
+<h2>🟢 優先度・学び：体感しておくと今後に活きる</h2>
+<h3>⑧ 同じタスクを通常モデルとFableに投げて差分を体感する</h3>
+<p>自分の実業務のタスクで比較すると、「この種の仕事は上位モデルに払う価値がある/ない」という<strong>自分なりのモデル使い分け基準</strong>が作れます。期間後のAPI課金判断の材料にもなります。</p>
+<h3>⑨ セキュリティ・権限設計の相談相手にする</h3>
+<p>外部から受け取るファイルの処理やメール自動化には、プロンプトインジェクション等のリスクが伴います。<strong>「この自動化ワークフローの危険な穴はどこか」をFableに監査させる</strong>のは、高い判断力が要る領域なので好相性です。詳しくは本サイトの「開発ガイド」「脅威一覧」タブも参照してください。</p>
+<h3>⑩ クライアント提案書の壁打ち</h3>
+<p>AI導入提案の論点整理・リスクの洗い出し・想定問答づくり。提案の「抜け」を見つける力は上位モデルほど強い傾向があります。<span class="source-tag source-unknown">推定</span></p>
+<hr />
+<h2>📌 STEP 3 の結論</h2>
+<blockquote>
+<p><strong>迷ったら「①塩漬けの難題」と「②設計書づくり」から。</strong><br />
+どちらも期間が終わった後に成果が残る使い方です。</p>
+</blockquote>
+<h2>---</h2>
+
+<h1>STEP 4｜進め方のコツと注意点</h1>
+<hr />
+<ul>
+<li><strong>上限管理</strong>：週間上限の50%が上限です。大事なタスクから使い、残量を意識しましょう。</li>
+<li><strong>プランモードとの組み合わせ</strong>：Fableに計画を立てさせ、承認後の実装は下位モデルへ切り替えるのが最も効率的です。</li>
+<li><strong>成果物は必ずファイルに残す</strong>：設計書・手順書・プロンプト集など、会話の中に置いたままにせずMarkdown等で保存しておくと期間後も資産になります。</li>
+<li><strong>機密データの扱いは通常どおり</strong>：モデルが強力でも、顧客の個人情報・APIキー等を渡さない原則は変わりません（「開発ガイド」タブ参照）。</li>
+<li><strong>バージョン確認</strong>：Claude Codeはv2.1.170以降にアップデートしてから試してください。<span class="source-tag source-estimate">報道</span></li>
+</ul>
+<hr />
+<h2>✅ 期間内チェックリスト</h2>
+<ul>
+<li>[ ] Claude Codeをv2.1.170以降にアップデートした</li>
+<li>[ ] 塩漬けになっていた一番難しい課題を1つ選び、Fableで実現可能性を検証した</li>
+<li>[ ] 進行中プロジェクトの全体設計書をFableに書かせて保存した</li>
+<li>[ ] CLAUDE.md・プロンプト資産の改善提案をもらった</li>
+<li>[ ] 通常モデルとの差分を自分の業務タスクで体感した</li>
+<li>[ ] 期間後に上位モデルへ課金する価値があるか、自分なりの判断基準を持てた</li>
+</ul>
+<hr />
+<h2>出典一覧</h2>
+<ul>
+<li><span class="source-tag source-official">公式</span> Anthropic：Claude Fable 5 / Mythos 5 発表 — https://www.anthropic.com/news/claude-fable-5-mythos-5</li>
+<li><span class="source-tag source-estimate">報道</span> テクノエッジ：プロモ提供延長（7月13日16時まで） — https://www.techno-edge.net/article/2026/07/08/5268.html</li>
+<li><span class="source-tag source-estimate">報道</span> ITmedia：サブスク提供の延長 — https://www.itmedia.co.jp/aiplus/article/2607/08/2000000167/</li>
+<li><span class="source-tag source-estimate">報道</span> 窓の杜：全有料プランでお試し期間延長 — https://forest.watch.impress.co.jp/docs/news/2123273.html</li>
+</ul>
+<hr />
+<p><em>提供期間・条件は変更される可能性があります。実際に利用する際はAnthropic公式の最新情報を確認してください。</em></p></div></div>
+<div class="footer">
+  <p>AIエージェント活用ドキュメント v4.1 | 2026年版</p>
+</div>
+<script>
+var literacyQuestions = [
+  {
+    "q": "Q. 公共のWi-Fiにつなぐ前に、まず何を確認しますか？",
+    "a": "A. お店や施設が案内している正しいWi-Fi名かを確認します。似た名前が複数ある時は接続しない方が安全です。"
+  },
+  {
+    "q": "Q. カフェや空港のWi-Fiで、仕事のログインをしてもよいですか？",
+    "a": "A. できれば避けます。必要な時は正しいWi-Fi名を確認し、VPNを使い、重要なIDやパスワード入力は慎重に行います。"
+  },
+  {
+    "q": "Q. 「自動的に接続する」をオンにしたままだと何が危ないですか？",
+    "a": "A. 以前使ったWi-Fiと同じ名前の偽物に、気づかないまま接続する可能性があります。外出先ではオフがおすすめです。"
+  },
+  {
+    "q": "Q. 多要素認証とは何ですか？",
+    "a": "A. パスワードだけでなく、SMS、認証アプリ、指紋など、別の確認も使ってログインを守る仕組みです。"
+  },
+  {
+    "q": "Q. 多要素認証を入れていれば、完全に安全ですか？",
+    "a": "A. 完全ではありません。パソコン自体を乗っ取られたり、偽サイトに入力したりすると危険が残ります。"
+  },
+  {
+    "q": "Q. パスワードを使い回すと何が危ないですか？",
+    "a": "A. 1つのサービスから漏れたパスワードで、他のサービスにもログインされる可能性があります。"
+  },
+  {
+    "q": "Q. パスワード管理アプリを使うメリットは何ですか？",
+    "a": "A. 長くてサービスごとに違うパスワードを覚えずに使えます。偽サイトに気づく助けにもなります。"
+  },
+  {
+    "q": "Q. メールのリンクを開く前に何を見ますか？",
+    "a": "A. 送信元、リンク先のURL、急がせる言葉がないかを見ます。不安ならメール内リンクではなく公式サイトから開きます。"
+  },
+  {
+    "q": "Q. 「今日中に対応しないと停止します」というメールはどう扱いますか？",
+    "a": "A. 急がせるメールは詐欺でよく使われます。すぐクリックせず、公式サイトや担当者に別経路で確認します。"
+  },
+  {
+    "q": "Q. 共有アカウントはなぜ避けた方がよいですか？",
+    "a": "A. 誰が操作したか分からなくなります。退職者や外注先のアクセス停止も漏れやすくなります。"
+  },
+  {
+    "q": "Q. 「必要な人だけに権限を渡す」とはどういう意味ですか？",
+    "a": "A. 全員に管理者権限を渡さず、仕事に必要な範囲だけ見られる・操作できるようにすることです。"
+  },
+  {
+    "q": "Q. 退職者や外注先のアカウントで確認すべきことは何ですか？",
+    "a": "A. メール、クラウド、GitHub、SNS、業務ツールにまだ入れないかを確認し、不要な権限を止めます。"
+  },
+  {
+    "q": "Q. AIに入力してよい情報か迷った時はどうしますか？",
+    "a": "A. 顧客名、個人情報、契約内容、パスワード、APIキーが含まれていないか確認します。迷うものは入れません。"
+  },
+  {
+    "q": "Q. AIに送ってはいけない代表例は何ですか？",
+    "a": "A. パスワード、APIキー、顧客の個人情報、未公開の契約内容、社外秘の資料です。"
+  },
+  {
+    "q": "Q. APIキーとは何ですか？",
+    "a": "A. システム同士がサービスを使うための鍵のような文字列です。漏れると勝手に使われる可能性があります。"
+  },
+  {
+    "q": "Q. .envファイルには何が入っていることが多いですか？",
+    "a": "A. APIキー、データベース接続情報、秘密の設定などが入っていることがあります。AIやGitに不用意に見せないようにします。"
+  },
+  {
+    "q": "Q. GitHubにパスワードやAPIキーを上げてしまったら何をしますか？",
+    "a": "A. すぐ削除するだけでなく、そのキーを無効化して新しいものに作り直します。履歴に残るためです。"
+  },
+  {
+    "q": "Q. 公共のUSB充電ポートを使う時の安全策は何ですか？",
+    "a": "A. ACアダプタ、モバイルバッテリー、充電専用ケーブルを使います。知らないUSBポートへ直接つながない方が安全です。"
+  },
+  {
+    "q": "Q. QRコードを読み取る時に気をつけることは何ですか？",
+    "a": "A. 開いた先のURLが本物か確認します。店頭やチラシのQRコードが貼り替えられている可能性もあります。"
+  },
+  {
+    "q": "Q. パソコンを置いたまま席を離れる時にすることは何ですか？",
+    "a": "A. 画面ロックをします。短時間でも、のぞき見や勝手な操作を防ぐ基本です。"
+  },
+  {
+    "q": "Q. パソコンをなくした時に備えて有効な対策は何ですか？",
+    "a": "A. 画面ロック、ディスク暗号化、リモートワイプ、クラウド側でのログアウトや権限停止です。"
+  },
+  {
+    "q": "Q. バックアップは作るだけで十分ですか？",
+    "a": "A. 十分ではありません。実際に復元できるかをテストしておくことが大切です。"
+  },
+  {
+    "q": "Q. ランサムウェアとは何ですか？",
+    "a": "A. ファイルを勝手に暗号化して、元に戻すためにお金を要求する攻撃です。バックアップと復旧手順が重要です。"
+  },
+  {
+    "q": "Q. ログとは何ですか？",
+    "a": "A. 誰が、いつ、何をしたかの記録です。問題が起きた時に原因や影響範囲を調べる手がかりになります。"
+  },
+  {
+    "q": "Q. ログを残す時に見るべき基本は何ですか？",
+    "a": "A. 誰が、いつ、どこから、何を見たか、何を変更したかです。"
+  },
+  {
+    "q": "Q. 使っていない外部サービス連携はどうしますか？",
+    "a": "A. 削除します。使っていない連携が残ると、そこから情報にアクセスされる可能性があります。"
+  },
+  {
+    "q": "Q. ブラウザに保存されたパスワードだけに頼ってよいですか？",
+    "a": "A. 便利ですが、端末を乗っ取られた時の影響があります。端末ロック、多要素認証、パスワード管理アプリも検討します。"
+  },
+  {
+    "q": "Q. セキュリティで「まず確認するとよい5つの質問」は何ですか？",
+    "a": "A. 誰が、何を、どこから、どの権限で、ログは残るか、です。打ち合わせでも使いやすい確認です。"
+  },
+  {
+    "q": "Q. セキュリティ事故かもしれないと思ったら最初に何をしますか？",
+    "a": "A. 勝手に削除や初期化をせず、関係者に連絡し、画面や時刻など分かる情報を残します。"
+  },
+  {
+    "q": "Q. セキュリティ対策で一番大事な姿勢は何ですか？",
+    "a": "A. 完璧を目指すより、重要な情報、入口、権限、ログを順番に確認し、危ないところから減らすことです。"
+  }
+];
+
+document.addEventListener('DOMContentLoaded', function() {
+  var quiz = literacyQuestions[Math.floor(Math.random() * literacyQuestions.length)];
+  var questionEl = document.getElementById('quizQuestion');
+  var answerEl = document.getElementById('quizAnswer');
+  var buttonEl = document.getElementById('quizAnswerButton');
+  var nextButtonEl = document.getElementById('quizNextButton');
+  var currentQuizIndex = -1;
+  function pickQuiz() {
+    if (!literacyQuestions.length) return null;
+    if (literacyQuestions.length === 1) {
+      currentQuizIndex = 0;
+      return literacyQuestions[0];
+    }
+    var nextIndex = currentQuizIndex;
+    while (nextIndex === currentQuizIndex) {
+      nextIndex = Math.floor(Math.random() * literacyQuestions.length);
+    }
+    currentQuizIndex = nextIndex;
+    return literacyQuestions[currentQuizIndex];
+  }
+  function renderQuiz() {
+    quiz = pickQuiz();
+    if (!quiz) return;
+    questionEl.textContent = quiz.q;
+    answerEl.innerHTML = '<strong>答え：</strong>' + quiz.a.replace(/^A. /, '');
+    answerEl.style.display = 'none';
+    buttonEl.textContent = '答えを表示';
+  }
+  if (questionEl && answerEl && buttonEl && quiz) {
+    renderQuiz();
+    buttonEl.addEventListener('click', function() {
+      var isOpen = answerEl.style.display === 'block';
+      answerEl.style.display = isOpen ? 'none' : 'block';
+      buttonEl.textContent = isOpen ? '答えを表示' : '答えを隠す';
+    });
+    if (nextButtonEl) {
+      nextButtonEl.addEventListener('click', renderQuiz);
+    }
+  }
+
+  document.querySelectorAll('h2').forEach(function(h) {
+    if (h.textContent.includes('結論')) {
+      h.style.background = 'linear-gradient(to right, #e8f5e9, transparent)';
+      h.style.borderLeftColor = '#43a047';
+      h.style.color = '#2e7d32';
+    }
+  });
+});
+</script>
+</body>
+</html>

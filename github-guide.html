@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AIエージェント活用ドキュメント</title>
+<style>
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", "Yu Gothic", sans-serif; background: #f5f7fa; color: #333; line-height: 1.7; }
+.header { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); color: white; padding: 24px 20px; text-align: center; }
+.header h1 { font-size: 2.1em; font-weight: 700; letter-spacing: 0.02em; margin-bottom: 8px; }
+.header p { opacity: 0.8; font-size: 0.9em; }
+.tabs { display: flex; background: #1a1a2e; overflow-x: auto; scrollbar-width: thin; scrollbar-color: #3949ab #1a1a2e; }
+.tabs::-webkit-scrollbar { height: 4px; }
+.tabs::-webkit-scrollbar-track { background: #1a1a2e; }
+.tabs::-webkit-scrollbar-thumb { background: #3949ab; border-radius: 2px; }
+.tab-link { flex: none; padding: 14px 16px; color: rgba(255,255,255,0.7); border: none; background: none; cursor: pointer; font-size: 0.82em; font-weight: 600; white-space: nowrap; border-bottom: 3px solid transparent; transition: all 0.2s;  text-decoration: none; display: inline-flex; align-items: center; }
+.tab-link:hover { color: white; background: rgba(255,255,255,0.1); }
+.tab-link.active { color: #64b5f6; border-bottom-color: #64b5f6; background: rgba(100,181,246,0.1); }
+.tab-content { display: block; }
+.content { max-width: 900px; margin: 0 auto; padding: 30px 20px; }
+h1 { font-size: 1.8em; color: #1a237e; margin: 30px 0 15px; padding-bottom: 10px; border-bottom: 3px solid #1a237e; }
+h2 { font-size: 1.4em; color: #283593; margin: 25px 0 12px; padding: 10px 15px; background: linear-gradient(to right, #e8eaf6, transparent); border-left: 4px solid #3949ab; border-radius: 4px; }
+h3 { font-size: 1.15em; color: #3949ab; margin: 20px 0 10px; }
+h4 { font-size: 1em; color: #5c6bc0; margin: 15px 0 8px; }
+p { margin: 10px 0; }
+ul, ol { margin: 10px 0 10px 25px; }
+li { margin: 5px 0; }
+table { width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 0.9em; overflow-x: auto; display: block; }
+th { background: #283593; color: white; padding: 12px; text-align: left; }
+td { padding: 10px 12px; border-bottom: 1px solid #e0e0e0; vertical-align: top; }
+tr:nth-child(even) { background: #f8f9ff; }
+tr:hover { background: #e8eaf6; }
+code { background: #f0f0f0; padding: 2px 6px; border-radius: 3px; font-family: "Courier New", monospace; font-size: 0.88em; color: #d32f2f; }
+pre { background: #1e1e2e; color: #cdd6f4; padding: 20px; border-radius: 8px; overflow-x: auto; margin: 15px 0; line-height: 1.6; }
+pre code { background: none; color: inherit; padding: 0; font-size: 0.9em; }
+blockquote { border-left: 4px solid #7986cb; padding: 12px 20px; background: #f3f4ff; margin: 15px 0; border-radius: 0 8px 8px 0; color: #444; }
+blockquote p { margin: 6px 0; }
+hr { border: none; border-top: 2px solid #e0e0e0; margin: 30px 0; }
+strong { color: #1a237e; }
+a { color: #3949ab; }
+.footer { text-align: center; padding: 16px; color: rgba(255,255,255,0.5); background: #1a1a2e; margin-top: 40px; font-size: 0.8em; }
+.literacy-quiz { background: #fff; border-bottom: 1px solid #dfe3f0; box-shadow: 0 2px 10px rgba(26,35,126,0.08); }
+.literacy-quiz-inner { max-width: 900px; margin: 0 auto; padding: 14px 20px; }
+.literacy-quiz-label { color: #5c6bc0; font-size: 0.78em; font-weight: 700; letter-spacing: 0; margin-bottom: 4px; }
+.literacy-quiz-question { color: #1a237e; font-weight: 700; margin: 0; }
+.literacy-quiz-answer { color: #444; margin: 6px 0 0; font-size: 0.92em;  display: none; }
+.literacy-quiz-answer strong { color: #2e7d32; }
+.quick-links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.quick-link { display: inline-flex; align-items: center; padding: 7px 12px; border: 1px solid #3949ab; border-radius: 6px; color: #3949ab; background: #fff; font-size: 0.86em; font-weight: 700; text-decoration: none; }
+.quick-link:hover { background: #e8eaf6; }
+
+.quiz-answer-button { margin-top: 8px; padding: 7px 12px; border: 1px solid #3949ab; border-radius: 6px; background: #3949ab; color: #fff; font-weight: 700; cursor: pointer; }
+.quiz-answer-button:hover { background: #283593; }
+
+.source-tag { display: inline-block; font-size: 0.78em; font-weight: 700; padding: 2px 8px; border-radius: 10px; margin-left: 6px; }
+.source-official { background: #e3f2fd; color: #1565c0; }
+.source-estimate { background: #fff3e0; color: #e65100; }
+.source-forum { background: #f3e5f5; color: #6a1b9a; }
+.source-unknown { background: #eeeeee; color: #616161; }
+
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>🛡️ AIエージェント活用ドキュメント</h1>
+  <p>AI導入・運用サポート資料集 | 2026年版</p>
+</div>
+<div class="tabs">
+  <a class="tab-link" href="security-docs-standalone.html">📋 開発ガイド</a>
+  <a class="tab-link" href="threats.html">⚠️ 脅威一覧</a>
+  <a class="tab-link" href="release-check.html">✅ リリース前チェック</a>
+  <a class="tab-link" href="claude-md.html">📁 CLAUDE.md設定</a>
+  <a class="tab-link" href="visibility.html">🔐 中級編：誰が何を見るか</a>
+  <a class="tab-link" href="vpn.html">🌐 VPN解説</a>
+  <a class="tab-link" href="public-pc.html">🏙️ 社外でのPC利用</a>
+  <a class="tab-link" href="password-auth.html">🔑 パスワード・認証</a>
+  <a class="tab-link" href="daily-check.html">✅ 日常チェック</a>
+  <a class="tab-link" href="glossary.html">🧠 用語集・会話術</a>
+  <a class="tab-link" href="cursor-agent-mode.html">🖱️ Cursor活用ガイド</a>
+  <a class="tab-link" href="fable-ideas.html">✨ Fable活用アイデア</a>
+  <a class="tab-link active" href="github-guide.html">🐙 GitHub入門</a>
+</div>
+<div class="literacy-quiz" id="literacyQuiz">
+  <div class="literacy-quiz-inner">
+    <div class="literacy-quiz-label">今日のセキュリティ・リテラシーテスト</div>
+    <p class="literacy-quiz-question" id="quizQuestion">Loading...</p>
+    <button class="quiz-answer-button" type="button" id="quizAnswerButton">&#x7B54;&#x3048;&#x3092;&#x8868;&#x793A;</button>
+    <button class="quiz-answer-button" type="button" id="quizNextButton">&#x6B21;&#x306E;&#x30AF;&#x30A4;&#x30BA;</button>
+    <p class="literacy-quiz-answer" id="quizAnswer"></p>
+    <div class="quick-links">
+      <a class="quick-link" href="daily-check.html">✅ 日常チェックリストを見る</a>
+      <a class="quick-link" href="glossary.html">🧠 用語集・会話術を見る</a>
+    </div>
+  </div>
+</div>
+<div class="tab-content" id="tab12"><div class="content"><h1>GitHub入門 — なぜ使うのか・どう使うのか</h1>
+<p><strong>対象</strong>：複数人（そして複数のAIエージェント）で同じプロジェクトフォルダを触り始めたチーム<br />
+<strong>形式</strong>：解説 → 2人で行うハンズオン → 1人で行うハンズオン → よくある質問</p>
+<p>参考教材：<a href="https://terakoya.sejuku.net/programs/category/46" target="_blank" rel="noopener">侍テラコヤ Git/GitHubカテゴリ</a>（図解・ステップ形式で基礎からチーム開発まで学べる教材群。より体系的に学びたい方はこちらもどうぞ）</p>
+<hr />
+
+<h1>STEP 1｜なぜGitHubなのか</h1>
+<hr />
+<h2>📋 よくある疑問</h2>
+<blockquote>
+<p>「OneDriveやGoogleドライブでフォルダを共有しているのに、なぜわざわざGitHubが要るの？」</p>
+</blockquote>
+<hr />
+<h2>🔍 クラウド同期フォルダとGitHubの違い</h2>
+<table>
+<thead>
+<tr>
+<th>観点</th>
+<th>クラウド同期（OneDrive / Googleドライブ）</th>
+<th>GitHub</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>反映のタイミング</td>
+<td>保存した<strong>瞬間に</strong>全員のフォルダへ即反映</td>
+<td>プッシュし、<strong>プルリクエストを承認して初めて</strong>共有版に反映</td>
+</tr>
+<tr>
+<td>同時に編集したら</td>
+<td>知らない間に上書き・「競合コピー」ファイルが発生</td>
+<td>ブランチで作業が分離され、合流（マージ）時に内容を確認できる</td>
+</tr>
+<tr>
+<td>変更の履歴</td>
+<td>限定的（誰が何をなぜ変えたか追いにくい）</td>
+<td>全変更が「<strong>誰が・いつ・何を・なぜ</strong>」付きで永久に残る</td>
+</tr>
+<tr>
+<td>昔の状態に戻す</td>
+<td>難しい・部分的</td>
+<td>いつでも任意の時点へ丸ごと戻せる</td>
+</tr>
+<tr>
+<td>AIエージェントとの相性</td>
+<td>AIがファイルを変更すると<strong>即座に共有版が書き換わる</strong>（事故のもと）</td>
+<td>AIの変更もプルリクエストで<strong>人間が確認してから</strong>合流できる</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>一言で言うと：GitHubは「即時同期の共有フォルダ」ではなく「変更を確認してから合流させる仕組み」です。</strong><br />
+複数の人＋複数のAIエージェントが同じプロジェクトを触る時代には、この「確認してから合流」が安全装置になります。</p>
+</blockquote>
+<hr />
+<h2>⚠️ 重要な注意：同期フォルダの中でGit管理をしない</h2>
+<pre><code>❌ やってはいけない構成
+OneDrive/
+└── プロジェクトフォルダ/   ← ここをGit管理する
+    └── .git/              ← OneDriveの同期処理とGitの管理情報が
+                              ぶつかって壊れることがある
+
+✅ 推奨の構成
+C:\work\プロジェクトフォルダ\   ← 同期対象外のローカルに置いてGit管理
+（共有・バックアップの役割はGitHub側が担うので、二重に同期する必要はない）
+</code></pre>
+<hr />
+<h2>📌 STEP 1 の結論</h2>
+<blockquote>
+<p><strong>「同時に触っても壊れない」「誰が何をしたか分かる」「いつでも戻せる」。この3つが揃うのがGitHubを使う理由です。</strong><br />
+そしてGit管理するフォルダは、OneDrive等の同期フォルダの外に置きます。</p>
+</blockquote>
+<h2>---</h2>
+
+<h1>STEP 2｜基本用語（この11個だけ覚えればOK）</h1>
+<hr />
+<table>
+<thead>
+<tr>
+<th>用語</th>
+<th>意味</th>
+<th>例えるなら</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>リポジトリ</strong></td>
+<td>プロジェクト一式の保管庫。GitHub上（リモート）と手元のPC（ローカル）の両方にある</td>
+<td>プロジェクトの「本棚」</td>
+</tr>
+<tr>
+<td><strong>クローン</strong></td>
+<td>GitHub上のリポジトリを丸ごと自分のPCへ複製すること（最初の1回だけ）</td>
+<td>本棚ごとコピーして持ち帰る</td>
+</tr>
+<tr>
+<td><strong>コミット</strong></td>
+<td>変更内容に説明を付けて記録すること</td>
+<td>ゲームの「セーブポイント」</td>
+</tr>
+<tr>
+<td><strong>プッシュ</strong></td>
+<td>手元のコミットをGitHubへ送ること</td>
+<td>アップロード</td>
+</tr>
+<tr>
+<td><strong>プル</strong></td>
+<td>GitHub上の最新状態を手元に取り込むこと</td>
+<td>ダウンロードして手元を最新化</td>
+</tr>
+<tr>
+<td><strong>ブランチ</strong></td>
+<td>共有版に影響を与えずに作業できる、自分専用の作業レーン</td>
+<td>本線から分かれた「支線」</td>
+</tr>
+<tr>
+<td><strong>プルリクエスト（PR）</strong></td>
+<td>「この変更を共有版に取り込んでください」という申請</td>
+<td>承認をもらうための「稟議書」</td>
+</tr>
+<tr>
+<td><strong>マージ</strong></td>
+<td>申請された変更を共有版に合流させること</td>
+<td>稟議の承認・実行</td>
+</tr>
+<tr>
+<td><strong>コンフリクト</strong></td>
+<td>2人が同じ箇所を別々に変えたときの衝突。どちらを採用するか人間が決めて解消する</td>
+<td>書類の同じ欄に2人が別のことを書いた状態</td>
+</tr>
+<tr>
+<td><strong>.gitignore</strong></td>
+<td>「これはGitHubに上げない」と指定するファイル</td>
+<td>持ち出し禁止リスト</td>
+</tr>
+<tr>
+<td><strong>main</strong></td>
+<td>共有版の本線ブランチ。ここが「チームの正」</td>
+<td>マスターデータ</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>🔍 全体の流れ（図）</h2>
+<pre><code>            ［GitHub：クラウド上の共有リポジトリ（main）］
+                 ↑ プッシュ              ↓ クローン／プル
+        ┌─────────────────┐    ┌─────────────────┐
+        │ Aさんのパソコン │    │ Bさんのパソコン │
+        │  ブランチで作業  │    │  ブランチで作業  │
+        └─────────────────┘    └─────────────────┘
+                 └── プルリクエスト → 相手が内容を確認 → マージ ──┘
+                       （承認されて初めて main に反映される）
+</code></pre>
+<hr />
+<h2>📌 STEP 2 の結論</h2>
+<blockquote>
+<p><strong>日常の流れは「プル（最新化）→ ブランチで作業 → コミット → プッシュ → プルリクエスト → マージ」の繰り返しです。</strong><br />
+この1周をSTEP 4・5のハンズオンで実際に体験します。</p>
+</blockquote>
+<h2>---</h2>
+
+<h1>STEP 3｜GitHubに上げてはいけないもの</h1>
+<hr />
+<pre><code>❌ 上げてはいけないもの
+- .env ファイル・APIキー・パスワード類
+- 顧客の個人情報を含む書類（氏名・住所・保険番号など）
+- node_modules などの巨大な自動生成フォルダ
+- 契約書・見積もりなどの機密書類（リポジトリの目的に不要なもの）
+</code></pre>
+<h3>.gitignore の設定例</h3>
+<pre><code># .gitignore
+.env
+.env.*
+node_modules/
+secrets/
+*.pem
+*.key
+</code></pre>
+<blockquote>
+<p><strong>プライベートリポジトリでも「共同作業者全員が見られる」前提で考えてください。</strong><br />
+個人情報・シークレットの詳しい扱いは「📋 開発ガイド」「✅ リリース前チェック」タブを参照してください。</p>
+</blockquote>
+<h2>---</h2>
+
+<h1>STEP 4｜ハンズオン①：2人で行う流れ確認（約60分）</h1>
+<hr />
+<h2>📋 準備</h2>
+<ul>
+<li>2人ともGitHubアカウントを持っていること</li>
+<li>役割を決める：<strong>【リーダー】</strong>＝リポジトリの持ち主／<strong>【メンバー】</strong>＝参加者</li>
+<li>練習用なので、実案件のフォルダではなく<strong>新しく作った練習フォルダ</strong>で行うこと</li>
+<li>AIエージェント（Claude Code等）に日本語で指示して進める前提で、各手順に「AIへの指示例」を付けています。もちろん自分でコマンドを打ってもOKです</li>
+</ul>
+<hr />
+<h2>🔨 手順</h2>
+<h3>手順1【リーダー】プライベートリポジトリを作る</h3>
+<p>GitHubの画面右上「＋」→「New repository」→ 名前を入力（例：<code>team-practice</code>）→ <strong>Private</strong> を選択 →「Create repository」。</p>
+<h3>手順2【リーダー】練習用フォルダをプッシュする</h3>
+<p>PCに練習用フォルダを作り、中にテキストファイルを1〜2個置いてから、AIエージェントに指示します。</p>
+<pre><code>AIへの指示例：
+「このフォルダをGitHubのリポジトリ team-practice にプッシュしてください。
+ その前に .gitignore を作って node_modules と .env を除外してください。
+ 実行する前に、何をするか説明してください」
+</code></pre>
+<blockquote>
+<p><strong>ポイント</strong>：「実行する前に説明して」を付けると、AIが何をしようとしているか確認してから進められます。</p>
+</blockquote>
+<h3>手順3【リーダー】メンバーを招待する</h3>
+<p>GitHubのリポジトリ画面 →「Settings」→「Collaborators」→「Add people」→ メンバーのアカウント名を入力して招待。メンバーは届いた招待メールを承認します。</p>
+<h3>手順4【メンバー】クローンする</h3>
+<p>リポジトリ画面の緑の「Code」ボタンからURLをコピーして、AIに渡します。</p>
+<pre><code>AIへの指示例：
+「このURLのリポジトリを C:\work\team-practice にクローンしてください。
+ （URLを貼り付け）」
+</code></pre>
+<p>※ 保存先はOneDrive等の同期フォルダの<strong>外</strong>にしてください（STEP 1参照）。</p>
+<h3>手順5【メンバー】ブランチを作って編集する</h3>
+<pre><code>AIへの指示例：
+「新しいブランチを作って、README.md に自己紹介を1行追加して、
+ コミットしてプッシュしてください」
+</code></pre>
+<h3>手順6【メンバー】プルリクエストを作る</h3>
+<pre><code>AIへの指示例：
+「今の変更でプルリクエストを作ってください。
+ 変更内容の説明も書いてください」
+</code></pre>
+<h3>手順7【リーダー】プルリクエストを確認してマージする</h3>
+<p>GitHubのリポジトリ画面 →「Pull requests」タブ → 届いたプルリクを開く →「Files changed」で<strong>何がどう変わるのかを目で確認</strong> → 問題なければ「Merge pull request」。気になる点があればコメントを書いて修正を依頼します。</p>
+<h3>手順8【両者】最新を取り込む</h3>
+<pre><code>AIへの指示例：
+「mainの最新を取り込んでください」
+</code></pre>
+<p>これで<strong>メンバーの変更が、リーダーの確認を経て、2人の手元に揃った</strong>ことになります。この1周がGitHubの基本サイクルです。</p>
+<h3>手順9（応用）わざとコンフリクトを起こして解消する</h3>
+<p>2人が<strong>同じファイルの同じ行</strong>をそれぞれのブランチで別々に変更し、順番にプルリクを出してマージすると、2人目のマージで衝突（コンフリクト）が起きます。</p>
+<pre><code>AIへの指示例：
+「コンフリクトが起きています。両方の変更内容を見せてください。
+ その上で、○○の方を採用して解消してください」
+</code></pre>
+<blockquote>
+<p>コンフリクトは<strong>故障ではなく、上書き事故を防いでくれた安全装置</strong>です。慌てずに「どちらを採用するか」を人間が決めれば解消できます。</p>
+</blockquote>
+<hr />
+<h2>✅ 2人版チェックリスト（お互いに声に出して確認）</h2>
+<ul>
+<li>[ ]【メンバー】プッシュしただけでは共有版（main）が変わらないことを確認した</li>
+<li>[ ]【リーダー】相手の変更がプルリクで届き、自分が承認するまでmainに入らないことを確認した</li>
+<li>[ ]【両者】マージ後にプルすると、2人の手元が同じ状態になることを確認した</li>
+<li>[ ]【両者】GitHubの「Commits」画面で「誰が・いつ・何を」変えたか履歴を見た</li>
+<li>[ ]【両者】コンフリクトを体験し、慌てず解消できた</li>
+<li>[ ]【両者】.gitignoreで除外したファイルがGitHub上に無いことを確認した</li>
+</ul>
+<h2>---</h2>
+
+<h1>STEP 5｜ハンズオン②：1人で行う練習（約30分）</h1>
+<hr />
+<p>1人で「リーダー役」と「メンバー役」の一人二役をやる練習です。相手がいなくても流れを一通り体験できます。</p>
+<h2>🔨 手順</h2>
+<ol>
+<li><strong>リポジトリ作成</strong>：GitHubで新しいプライベートリポジトリ（例：<code>solo-practice</code>）を作る</li>
+<li><strong>クローン</strong>：AIに「このURLをローカルの◯◯フォルダにクローンして」と指示</li>
+<li><strong>編集→コミット→プッシュ</strong>：ファイルを1つ作って「変更をコミットしてプッシュして」と指示</li>
+<li><strong>履歴を見る</strong>：GitHubの「Commits」画面で、今の変更が記録されていることを確認</li>
+<li><strong>ブランチで変更</strong>：「新しいブランチを作って◯◯を変更し、プッシュして」と指示</li>
+<li><strong>プルリク→セルフマージ</strong>：「プルリクエストを作って」→ GitHub画面で自分で内容確認 → 自分でマージ（1人でもこの確認の一呼吸が練習になります）</li>
+<li><strong>プル</strong>：「mainの最新を取り込んで」と指示して手元を最新化</li>
+<li><strong>戻す体験</strong>：「さっきのコミットを取り消して、1つ前の状態に戻して」と指示（revert体験）。<strong>「いつでも戻せる」を一度体験しておくと、以後怖くなくなります</strong></li>
+</ol>
+<hr />
+<h2>✅ 1人版チェックリスト</h2>
+<ul>
+<li>[ ] クローン→編集→コミット→プッシュの流れを自分で(AI経由で)一周できた</li>
+<li>[ ] GitHubの画面でコミット履歴と差分（何が変わったか）を見られた</li>
+<li>[ ] ブランチ→プルリク→マージの流れを体験した</li>
+<li>[ ] コミットの取り消し（revert）で過去の状態に戻せた</li>
+<li>[ ] 「プッシュ＝即共有ではない」「マージして初めて共有版が変わる」を自分の言葉で説明できる</li>
+</ul>
+<h2>---</h2>
+
+<h1>STEP 6｜よくある質問</h1>
+<hr />
+<h3>Q. 間違って作ったリポジトリを消したい</h3>
+<p>リポジトリ画面 →「Settings」→ 一番下の「Danger Zone」→「Delete this repository」→ 確認のためリポジトリ名を入力して削除します。「とても大変なことだよ」と何度も確認されるのは、それだけ取り返しがつかない操作だからです。</p>
+<h3>Q. プライベートリポジトリなら個人情報を上げてもいい？</h3>
+<p>おすすめしません。共同作業者全員が見られますし、誤って公開設定にする・アカウントが侵害されるなどの事故リスクが残ります。個人情報・シークレットはそもそも上げない設計にしてください（STEP 3参照）。</p>
+<h3>Q. AIエージェントにGit操作を任せるときの注意は？</h3>
+<p>プッシュ・マージ・削除・強制上書き（force push）など<strong>「共有に影響する操作」は、実行前に何をするか説明させてから承認</strong>する習慣をつけてください。「実行する前に説明して」の一言をプロンプトに足すだけで効果があります。</p>
+<h3>Q. NotionやGoogleドライブとはどう使い分ける？</h3>
+<table>
+<thead>
+<tr>
+<th>ツール</th>
+<th>向いているもの</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GitHub</td>
+<td>コード・設定ファイル・AIへの指示書など「変更履歴と承認フローが欲しいもの」</td>
+</tr>
+<tr>
+<td>Notion等のDB</td>
+<td>顧客データベース・タスク管理・日常のメモ</td>
+</tr>
+<tr>
+<td>Googleドライブ等</td>
+<td>大きなファイルの受け渡し・共有（動画・PDF資料など）</td>
+</tr>
+</tbody>
+</table>
+<p>全部をGitHubに寄せる必要はありません。「同時に編集して壊れると困るテキスト系のもの」から順にGitHubへ移すのが現実的です。</p>
+<hr />
+<h2>📌 まとめ</h2>
+<blockquote>
+<p><strong>GitHubは「変更を確認してから合流させる仕組み」。</strong><br />
+複数の人と複数のAIが同じプロジェクトを触る時代の、上書き事故を防ぐ安全装置です。<br />
+まずはSTEP 5の1人練習で一周し、その後STEP 4の2人ハンズオンをチームでやってみてください。</p>
+</blockquote>
+<hr />
+<h2>参考教材</h2>
+<ul>
+<li><a href="https://terakoya.sejuku.net/programs/category/46" target="_blank" rel="noopener">侍テラコヤ Git/GitHubカテゴリ</a> — 図解・ステップ形式でGitの基礎からチーム開発・コンフリクト解消まで体系的に学べる教材群</li>
+</ul>
+<hr />
+<p><em>このドキュメントは入門者向けの整理です。GitHubの画面・機能は更新されることがあるため、表記が実際の画面と異なる場合は公式ドキュメントを確認してください。</em></p></div></div>
+<div class="footer">
+  <p>AIエージェント活用ドキュメント v4.1 | 2026年版</p>
+</div>
+<script>
+var literacyQuestions = [
+  {
+    "q": "Q. 公共のWi-Fiにつなぐ前に、まず何を確認しますか？",
+    "a": "A. お店や施設が案内している正しいWi-Fi名かを確認します。似た名前が複数ある時は接続しない方が安全です。"
+  },
+  {
+    "q": "Q. カフェや空港のWi-Fiで、仕事のログインをしてもよいですか？",
+    "a": "A. できれば避けます。必要な時は正しいWi-Fi名を確認し、VPNを使い、重要なIDやパスワード入力は慎重に行います。"
+  },
+  {
+    "q": "Q. 「自動的に接続する」をオンにしたままだと何が危ないですか？",
+    "a": "A. 以前使ったWi-Fiと同じ名前の偽物に、気づかないまま接続する可能性があります。外出先ではオフがおすすめです。"
+  },
+  {
+    "q": "Q. 多要素認証とは何ですか？",
+    "a": "A. パスワードだけでなく、SMS、認証アプリ、指紋など、別の確認も使ってログインを守る仕組みです。"
+  },
+  {
+    "q": "Q. 多要素認証を入れていれば、完全に安全ですか？",
+    "a": "A. 完全ではありません。パソコン自体を乗っ取られたり、偽サイトに入力したりすると危険が残ります。"
+  },
+  {
+    "q": "Q. パスワードを使い回すと何が危ないですか？",
+    "a": "A. 1つのサービスから漏れたパスワードで、他のサービスにもログインされる可能性があります。"
+  },
+  {
+    "q": "Q. パスワード管理アプリを使うメリットは何ですか？",
+    "a": "A. 長くてサービスごとに違うパスワードを覚えずに使えます。偽サイトに気づく助けにもなります。"
+  },
+  {
+    "q": "Q. メールのリンクを開く前に何を見ますか？",
+    "a": "A. 送信元、リンク先のURL、急がせる言葉がないかを見ます。不安ならメール内リンクではなく公式サイトから開きます。"
+  },
+  {
+    "q": "Q. 「今日中に対応しないと停止します」というメールはどう扱いますか？",
+    "a": "A. 急がせるメールは詐欺でよく使われます。すぐクリックせず、公式サイトや担当者に別経路で確認します。"
+  },
+  {
+    "q": "Q. 共有アカウントはなぜ避けた方がよいですか？",
+    "a": "A. 誰が操作したか分からなくなります。退職者や外注先のアクセス停止も漏れやすくなります。"
+  },
+  {
+    "q": "Q. 「必要な人だけに権限を渡す」とはどういう意味ですか？",
+    "a": "A. 全員に管理者権限を渡さず、仕事に必要な範囲だけ見られる・操作できるようにすることです。"
+  },
+  {
+    "q": "Q. 退職者や外注先のアカウントで確認すべきことは何ですか？",
+    "a": "A. メール、クラウド、GitHub、SNS、業務ツールにまだ入れないかを確認し、不要な権限を止めます。"
+  },
+  {
+    "q": "Q. AIに入力してよい情報か迷った時はどうしますか？",
+    "a": "A. 顧客名、個人情報、契約内容、パスワード、APIキーが含まれていないか確認します。迷うものは入れません。"
+  },
+  {
+    "q": "Q. AIに送ってはいけない代表例は何ですか？",
+    "a": "A. パスワード、APIキー、顧客の個人情報、未公開の契約内容、社外秘の資料です。"
+  },
+  {
+    "q": "Q. APIキーとは何ですか？",
+    "a": "A. システム同士がサービスを使うための鍵のような文字列です。漏れると勝手に使われる可能性があります。"
+  },
+  {
+    "q": "Q. .envファイルには何が入っていることが多いですか？",
+    "a": "A. APIキー、データベース接続情報、秘密の設定などが入っていることがあります。AIやGitに不用意に見せないようにします。"
+  },
+  {
+    "q": "Q. GitHubにパスワードやAPIキーを上げてしまったら何をしますか？",
+    "a": "A. すぐ削除するだけでなく、そのキーを無効化して新しいものに作り直します。履歴に残るためです。"
+  },
+  {
+    "q": "Q. 公共のUSB充電ポートを使う時の安全策は何ですか？",
+    "a": "A. ACアダプタ、モバイルバッテリー、充電専用ケーブルを使います。知らないUSBポートへ直接つながない方が安全です。"
+  },
+  {
+    "q": "Q. QRコードを読み取る時に気をつけることは何ですか？",
+    "a": "A. 開いた先のURLが本物か確認します。店頭やチラシのQRコードが貼り替えられている可能性もあります。"
+  },
+  {
+    "q": "Q. パソコンを置いたまま席を離れる時にすることは何ですか？",
+    "a": "A. 画面ロックをします。短時間でも、のぞき見や勝手な操作を防ぐ基本です。"
+  },
+  {
+    "q": "Q. パソコンをなくした時に備えて有効な対策は何ですか？",
+    "a": "A. 画面ロック、ディスク暗号化、リモートワイプ、クラウド側でのログアウトや権限停止です。"
+  },
+  {
+    "q": "Q. バックアップは作るだけで十分ですか？",
+    "a": "A. 十分ではありません。実際に復元できるかをテストしておくことが大切です。"
+  },
+  {
+    "q": "Q. ランサムウェアとは何ですか？",
+    "a": "A. ファイルを勝手に暗号化して、元に戻すためにお金を要求する攻撃です。バックアップと復旧手順が重要です。"
+  },
+  {
+    "q": "Q. ログとは何ですか？",
+    "a": "A. 誰が、いつ、何をしたかの記録です。問題が起きた時に原因や影響範囲を調べる手がかりになります。"
+  },
+  {
+    "q": "Q. ログを残す時に見るべき基本は何ですか？",
+    "a": "A. 誰が、いつ、どこから、何を見たか、何を変更したかです。"
+  },
+  {
+    "q": "Q. 使っていない外部サービス連携はどうしますか？",
+    "a": "A. 削除します。使っていない連携が残ると、そこから情報にアクセスされる可能性があります。"
+  },
+  {
+    "q": "Q. ブラウザに保存されたパスワードだけに頼ってよいですか？",
+    "a": "A. 便利ですが、端末を乗っ取られた時の影響があります。端末ロック、多要素認証、パスワード管理アプリも検討します。"
+  },
+  {
+    "q": "Q. セキュリティで「まず確認するとよい5つの質問」は何ですか？",
+    "a": "A. 誰が、何を、どこから、どの権限で、ログは残るか、です。打ち合わせでも使いやすい確認です。"
+  },
+  {
+    "q": "Q. セキュリティ事故かもしれないと思ったら最初に何をしますか？",
+    "a": "A. 勝手に削除や初期化をせず、関係者に連絡し、画面や時刻など分かる情報を残します。"
+  },
+  {
+    "q": "Q. セキュリティ対策で一番大事な姿勢は何ですか？",
+    "a": "A. 完璧を目指すより、重要な情報、入口、権限、ログを順番に確認し、危ないところから減らすことです。"
+  }
+];
+
+document.addEventListener('DOMContentLoaded', function() {
+  var quiz = literacyQuestions[Math.floor(Math.random() * literacyQuestions.length)];
+  var questionEl = document.getElementById('quizQuestion');
+  var answerEl = document.getElementById('quizAnswer');
+  var buttonEl = document.getElementById('quizAnswerButton');
+  var nextButtonEl = document.getElementById('quizNextButton');
+  var currentQuizIndex = -1;
+  function pickQuiz() {
+    if (!literacyQuestions.length) return null;
+    if (literacyQuestions.length === 1) {
+      currentQuizIndex = 0;
+      return literacyQuestions[0];
+    }
+    var nextIndex = currentQuizIndex;
+    while (nextIndex === currentQuizIndex) {
+      nextIndex = Math.floor(Math.random() * literacyQuestions.length);
+    }
+    currentQuizIndex = nextIndex;
+    return literacyQuestions[currentQuizIndex];
+  }
+  function renderQuiz() {
+    quiz = pickQuiz();
+    if (!quiz) return;
+    questionEl.textContent = quiz.q;
+    answerEl.innerHTML = '<strong>答え：</strong>' + quiz.a.replace(/^A. /, '');
+    answerEl.style.display = 'none';
+    buttonEl.textContent = '答えを表示';
+  }
+  if (questionEl && answerEl && buttonEl && quiz) {
+    renderQuiz();
+    buttonEl.addEventListener('click', function() {
+      var isOpen = answerEl.style.display === 'block';
+      answerEl.style.display = isOpen ? 'none' : 'block';
+      buttonEl.textContent = isOpen ? '答えを表示' : '答えを隠す';
+    });
+    if (nextButtonEl) {
+      nextButtonEl.addEventListener('click', renderQuiz);
+    }
+  }
+
+  document.querySelectorAll('h2').forEach(function(h) {
+    if (h.textContent.includes('結論')) {
+      h.style.background = 'linear-gradient(to right, #e8f5e9, transparent)';
+      h.style.borderLeftColor = '#43a047';
+      h.style.color = '#2e7d32';
+    }
+  });
+});
+</script>
+</body>
+</html>

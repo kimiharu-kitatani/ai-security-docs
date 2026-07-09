@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AIエージェント活用ドキュメント</title>
+<style>
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", "Yu Gothic", sans-serif; background: #f5f7fa; color: #333; line-height: 1.7; }
+.header { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); color: white; padding: 24px 20px; text-align: center; }
+.header h1 { font-size: 2.1em; font-weight: 700; letter-spacing: 0.02em; margin-bottom: 8px; }
+.header p { opacity: 0.8; font-size: 0.9em; }
+.tabs { display: flex; background: #1a1a2e; overflow-x: auto; scrollbar-width: thin; scrollbar-color: #3949ab #1a1a2e; }
+.tabs::-webkit-scrollbar { height: 4px; }
+.tabs::-webkit-scrollbar-track { background: #1a1a2e; }
+.tabs::-webkit-scrollbar-thumb { background: #3949ab; border-radius: 2px; }
+.tab-link { flex: none; padding: 14px 16px; color: rgba(255,255,255,0.7); border: none; background: none; cursor: pointer; font-size: 0.82em; font-weight: 600; white-space: nowrap; border-bottom: 3px solid transparent; transition: all 0.2s;  text-decoration: none; display: inline-flex; align-items: center; }
+.tab-link:hover { color: white; background: rgba(255,255,255,0.1); }
+.tab-link.active { color: #64b5f6; border-bottom-color: #64b5f6; background: rgba(100,181,246,0.1); }
+.tab-content { display: block; }
+.content { max-width: 900px; margin: 0 auto; padding: 30px 20px; }
+h1 { font-size: 1.8em; color: #1a237e; margin: 30px 0 15px; padding-bottom: 10px; border-bottom: 3px solid #1a237e; }
+h2 { font-size: 1.4em; color: #283593; margin: 25px 0 12px; padding: 10px 15px; background: linear-gradient(to right, #e8eaf6, transparent); border-left: 4px solid #3949ab; border-radius: 4px; }
+h3 { font-size: 1.15em; color: #3949ab; margin: 20px 0 10px; }
+h4 { font-size: 1em; color: #5c6bc0; margin: 15px 0 8px; }
+p { margin: 10px 0; }
+ul, ol { margin: 10px 0 10px 25px; }
+li { margin: 5px 0; }
+table { width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 0.9em; overflow-x: auto; display: block; }
+th { background: #283593; color: white; padding: 12px; text-align: left; }
+td { padding: 10px 12px; border-bottom: 1px solid #e0e0e0; vertical-align: top; }
+tr:nth-child(even) { background: #f8f9ff; }
+tr:hover { background: #e8eaf6; }
+code { background: #f0f0f0; padding: 2px 6px; border-radius: 3px; font-family: "Courier New", monospace; font-size: 0.88em; color: #d32f2f; }
+pre { background: #1e1e2e; color: #cdd6f4; padding: 20px; border-radius: 8px; overflow-x: auto; margin: 15px 0; line-height: 1.6; }
+pre code { background: none; color: inherit; padding: 0; font-size: 0.9em; }
+blockquote { border-left: 4px solid #7986cb; padding: 12px 20px; background: #f3f4ff; margin: 15px 0; border-radius: 0 8px 8px 0; color: #444; }
+blockquote p { margin: 6px 0; }
+hr { border: none; border-top: 2px solid #e0e0e0; margin: 30px 0; }
+strong { color: #1a237e; }
+a { color: #3949ab; }
+.footer { text-align: center; padding: 16px; color: rgba(255,255,255,0.5); background: #1a1a2e; margin-top: 40px; font-size: 0.8em; }
+.literacy-quiz { background: #fff; border-bottom: 1px solid #dfe3f0; box-shadow: 0 2px 10px rgba(26,35,126,0.08); }
+.literacy-quiz-inner { max-width: 900px; margin: 0 auto; padding: 14px 20px; }
+.literacy-quiz-label { color: #5c6bc0; font-size: 0.78em; font-weight: 700; letter-spacing: 0; margin-bottom: 4px; }
+.literacy-quiz-question { color: #1a237e; font-weight: 700; margin: 0; }
+.literacy-quiz-answer { color: #444; margin: 6px 0 0; font-size: 0.92em;  display: none; }
+.literacy-quiz-answer strong { color: #2e7d32; }
+.quick-links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.quick-link { display: inline-flex; align-items: center; padding: 7px 12px; border: 1px solid #3949ab; border-radius: 6px; color: #3949ab; background: #fff; font-size: 0.86em; font-weight: 700; text-decoration: none; }
+.quick-link:hover { background: #e8eaf6; }
+
+.quiz-answer-button { margin-top: 8px; padding: 7px 12px; border: 1px solid #3949ab; border-radius: 6px; background: #3949ab; color: #fff; font-weight: 700; cursor: pointer; }
+.quiz-answer-button:hover { background: #283593; }
+
+.source-tag { display: inline-block; font-size: 0.78em; font-weight: 700; padding: 2px 8px; border-radius: 10px; margin-left: 6px; }
+.source-official { background: #e3f2fd; color: #1565c0; }
+.source-estimate { background: #fff3e0; color: #e65100; }
+.source-forum { background: #f3e5f5; color: #6a1b9a; }
+.source-unknown { background: #eeeeee; color: #616161; }
+
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>🛡️ AIエージェント活用ドキュメント</h1>
+  <p>AI導入・運用サポート資料集 | 2026年版</p>
+</div>
+<div class="tabs">
+  <a class="tab-link" href="security-docs-standalone.html">📋 開発ガイド</a>
+  <a class="tab-link" href="threats.html">⚠️ 脅威一覧</a>
+  <a class="tab-link" href="release-check.html">✅ リリース前チェック</a>
+  <a class="tab-link" href="claude-md.html">📁 CLAUDE.md設定</a>
+  <a class="tab-link" href="visibility.html">🔐 中級編：誰が何を見るか</a>
+  <a class="tab-link" href="vpn.html">🌐 VPN解説</a>
+  <a class="tab-link" href="public-pc.html">🏙️ 社外でのPC利用</a>
+  <a class="tab-link" href="password-auth.html">🔑 パスワード・認証</a>
+  <a class="tab-link" href="daily-check.html">✅ 日常チェック</a>
+  <a class="tab-link" href="glossary.html">🧠 用語集・会話術</a>
+  <a class="tab-link active" href="cursor-agent-mode.html">🖱️ Cursor活用ガイド</a>
+  <a class="tab-link" href="fable-ideas.html">✨ Fable活用アイデア</a>
+  <a class="tab-link" href="github-guide.html">🐙 GitHub入門</a>
+</div>
+<div class="literacy-quiz" id="literacyQuiz">
+  <div class="literacy-quiz-inner">
+    <div class="literacy-quiz-label">今日のセキュリティ・リテラシーテスト</div>
+    <p class="literacy-quiz-question" id="quizQuestion">Loading...</p>
+    <button class="quiz-answer-button" type="button" id="quizAnswerButton">&#x7B54;&#x3048;&#x3092;&#x8868;&#x793A;</button>
+    <button class="quiz-answer-button" type="button" id="quizNextButton">&#x6B21;&#x306E;&#x30AF;&#x30A4;&#x30BA;</button>
+    <p class="literacy-quiz-answer" id="quizAnswer"></p>
+    <div class="quick-links">
+      <a class="quick-link" href="daily-check.html">✅ 日常チェックリストを見る</a>
+      <a class="quick-link" href="glossary.html">🧠 用語集・会話術を見る</a>
+    </div>
+  </div>
+</div>
+<div class="tab-content" id="tab10"><div class="content"><h1>Cursor AIエージェント活用ガイド</h1>
+<p><strong>対象</strong>：Cursorで複数のAIエージェント（Claude Code、Codexなど）を並行して使ってみたい方<br />
+<strong>形式</strong>：よくある疑問 → 現状の公式情報 → 使い方の整理</p>
+<p>出典について：本文中の<span class="source-tag source-official">公式</span>はCursor公式ドキュメント・公式changelog・公式ブログで確認できた事実、<span class="source-tag source-estimate">推定・二次情報</span>はWeb記事や一般論で公式一次情報では未確認のもの、<span class="source-tag source-forum">フォーラム</span>はCursor公式フォーラムでのユーザー・スタッフの投稿ベースの情報です。</p>
+<hr />
+
+<h1>STEP 1｜なぜ「Cursorのエージェントモード」が注目されるのか</h1>
+<hr />
+<h2>📋 よくある背景</h2>
+<blockquote>
+<p>複数の案件・プロジェクトを並行して抱えるようになると、Claude CodeやCodexなど複数のAIエージェントを<strong>別々のウィンドウで同時に起動して手動で行き来する</strong>運用になりがちです。「画面を切り替えるのが大変」「マルチタスクさせると自分の方が疲弊する」という負担が生まれ、これがCursorの「1画面で複数エージェントをまとめて見られる」UIへの関心につながるケースが多く見られます。</p>
+</blockquote>
+<hr />
+<h2>🔍 整理すると</h2>
+<ul>
+<li>複数エージェントの並行運用が日常化すると、ウィンドウ管理そのものが仕事になってしまう</li>
+<li>Cursorの「Agents Window（エージェントウィンドウ）」は、複数エージェントを1画面にまとめて見られるため、この負担を直接解消できる可能性がある</li>
+<li>あわせて、処理速度・コストの良いモデル（Composer）への関心や、AIコーディングツールの業界動向へのキャッチアップ意識も動機になりやすい</li>
+</ul>
+<hr />
+<h2>📌 STEP 1 の結論</h2>
+<blockquote>
+<p><strong>「複数のAIエージェントを並行運用したいが、ウィンドウ管理が大変」という悩みは、Cursorのエージェントモードに関心を持つ最も典型的なきっかけです。</strong><br />
+まずはこの悩みが実際に解消されるのか、次のSTEPで公式情報をもとに整理します。</p>
+</blockquote>
+<h2>---</h2>
+
+<h1>STEP 2｜New AgentモードでClaude Code / Codexを使うには</h1>
+<hr />
+<h2>📋 よくある質問</h2>
+<blockquote>
+<p>「New Agentモードで普通に話すと、Cursor独自のモデル（Composerなど）が使われてしまう。Claude CodeやCodexといった他社製エージェントを使いたい場合はどうすればいいか？」</p>
+</blockquote>
+<hr />
+<h2>🔍 結論：整理が必要</h2>
+<p>やり方は大きく2つに分かれます。</p>
+<h3>方法1：New Agentのモデル切替</h3>
+<p>New Agent作成後、チャット欄のモデルのドロップダウンで、Cursor独自モデルのComposer以外に、Claude系（Sonnet/Opus）やGPT-5-Codex系などのモデルも選べます。<span class="source-tag source-official">公式</span></p>
+<p><strong>ただし注意点</strong>：これは「そのモデルを頭脳として使うCursor自身のエージェント」であって、Claude Code・Codexという製品本体が動くわけではありません。似ているようで別物です。</p>
+<h3>方法2：本物のClaude Code/Codexを1画面に並べる</h3>
+<p>導入済みの拡張機能のパネル（Claude Code拡張・Codex拡張など）を、Cursorのウィンドウ内にドラッグして並べる方法です。「Cursorのネイティブチャットを上段、Claude CodeとCodexのパネルを左右、下段にターミナル」という配置で1ウィンドウに集約している運用例が第三者の解説記事で具体的に確認できています。<span class="source-tag source-estimate">推定・二次情報</span></p>
+<p>一度この配置を作れば、別ウィンドウで複数エージェントを手動で行き来する運用は不要になります。</p>
+<hr />
+<h2>🔍 公式情報で確認できたこと / できなかったこと</h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>状況</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>New Agentのモデル選択欄でClaude系・GPT-5-Codex系などを選べる</td>
+<td><span class="source-tag source-official">公式で確認済み</span>（cursor.com/docs/models）</td>
+</tr>
+<tr>
+<td>Agents Window（エージェントウィンドウ）で複数エージェントをローカル/クラウド/リモートSSH横断で並行実行できる</td>
+<td><span class="source-tag source-official">公式で確認済み</span>（cursor.com/changelog/3-0）</td>
+</tr>
+<tr>
+<td>New Agentタブの中で、拡張機能側のClaude Code/Codex本体をそのまま起動・表示できる</td>
+<td><span class="source-tag source-unknown">未確認</span>。公式changelog・ドキュメントに該当の記載はなく、現時点ではできないと考えるのが妥当</td>
+</tr>
+<tr>
+<td>拡張機能パネルをドラッグして1ウィンドウに集約する運用</td>
+<td><span class="source-tag source-estimate">推定・二次情報</span>（第三者の解説記事で具体例を確認）</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>📌 STEP 2 の結論</h2>
+<blockquote>
+<p><strong>Cursor自身のAgents Windowが管理できるのは、Cursor自身のエージェントのみです。</strong><br />
+Claude Code・Codexという製品本体を1画面にまとめたい場合は、New Agentのモデル切替ではなく、拡張機能パネルの並列配置（方法2）が現実的な選択肢です。</p>
+</blockquote>
+<h2>---</h2>
+
+<h1>STEP 3｜エージェントタブ・エージェントウィンドウの関係</h1>
+<hr />
+<h2>📋 よくある疑問</h2>
+<blockquote>
+<p>「エージェントウィンドウ・サイドバーのチャット・エージェントタブ・New Agentボタンの関係がよく分からない」</p>
+</blockquote>
+<p>これはCursor側のUIがここ数ヶ月で変わった影響もあり、ユーザーの間でも「よく分からない」という声が多い部分です。Cursor公式フォーラムでも同様の質問に対してスタッフの説明が限定的で、混乱・不具合報告が複数見られました。<span class="source-tag source-forum">フォーラム</span> UIがまだ発展途上であることが大きく、利用者の理解不足だけが原因ではないと考えられます。</p>
+<hr />
+<h2>🔍 大枠のイメージ</h2>
+<ul>
+<li><strong>エージェントウィンドウ（サイドバー）</strong> = 起動中の全エージェントの一覧。ローカル/クラウド問わず一目で見える場所</li>
+<li><strong>エージェントタブ</strong> = そのウィンドウの中で、個々のエージェントの会話・作業状況を1つずつ表示するタブ。タブごとにモデルや作業対象（worktree）を変えられる</li>
+<li><strong>New Agent</strong> = 新しいタブ（新しいエージェントセッション）を1つ追加するボタン</li>
+</ul>
+<p>「別ウィンドウで複数起動して手動で行き来する」運用から、「1つのエージェントウィンドウの中でタブを並べる」運用に置き換えるイメージで捉えると分かりやすくなります。</p>
+<hr />
+<h2>📌 STEP 3 の結論</h2>
+<blockquote>
+<p><strong>Cursor 3.0（2026年4月2日リリース）で導入された「Agents Window」が、複数エージェント並行管理の核になっています。</strong><span class="source-tag source-official">公式</span><br />
+Agent Tabsにより複数のエージェントチャットをサイドバイサイド/グリッドで表示可能で、各タブは個別にモード・モデル・worktreeを持てます。<span class="source-tag source-official">公式</span></p>
+</blockquote>
+<h2>---</h2>
+
+<h1>STEP 4｜Composerモデルの使いどころと料金</h1>
+<hr />
+<h2>🔍 Composerとは</h2>
+<p>Composerは速度とコストパフォーマンスに寄せたCursor独自のモデルです。モデル選択肢には、Cursor独自のComposer（1〜2.5）、Anthropic Claude系（Sonnet/Opus/Haiku各バージョン）、OpenAI GPT系（GPT-5系、GPT-5-Codex系）、Gemini、Grok、GLM、Kimiなどが並び、「Auto」で自動選択も可能です。<span class="source-tag source-official">公式</span>（cursor.com/docs/models）</p>
+<h3>料金</h3>
+<table>
+<thead>
+<tr>
+<th>モデル</th>
+<th>入力</th>
+<th>出力</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Composer 2.5（標準）</td>
+<td>$0.50 / M トークン</td>
+<td>$2.50 / M トークン</td>
+</tr>
+<tr>
+<td>Composer 2.5 Fast</td>
+<td>$3.00 / M トークン</td>
+<td>$15.00 / M トークン</td>
+</tr>
+</tbody>
+</table>
+<p><span class="source-tag source-official">公式</span>（cursor.com/blog/composer-2-5）</p>
+<hr />
+<h2>🔍 使い分けの目安</h2>
+<ul>
+<li>定型的な修正や量をこなす作業、スピード重視のタスク → <strong>Composer</strong>に任せる</li>
+<li>設計判断が必要な複雑なタスク、じっくり考えさせたい場面 → <strong>Claude系モデル</strong>を選ぶ</li>
+</ul>
+<hr />
+<h2>📌 STEP 4 の結論</h2>
+<blockquote>
+<p><strong>Composer 2.5は競合の最上位モデルに比べて大幅に低コスト（標準版は競合フロンティアモデルの約1/10のコストとされる）で、コスト効率を重視するタスクに向いています。</strong><span class="source-tag source-estimate">推定・二次情報</span>（価格情報自体はCursor公式ブログに基づく）</p>
+</blockquote>
+<h2>---</h2>
+
+<h1>STEP 5｜世の中でCursor / AIコーディングエージェントが使われる理由</h1>
+<hr />
+<h2>🔍 一般的に挙げられる理由</h2>
+<ul>
+<li>複数ファイルにまたがる編集・リファクタリングを自動でこなせる点が評価されている。Cursor公式ブログでは、Cursorのエージェントがデフォルト運用になった企業でPRのマージ数が39%増加したという自社発表がある。<span class="source-tag source-estimate">推定・一般論（提供元の自己申告データ）</span>（出典：cursor.com/blog/productivity）</li>
+<li>Stack Overflow 2025年調査では開発者の84%がAIツールを利用中/利用予定、51%のプロフェッショナル開発者が日常的にAIを利用していると報告されている。JetBrainsの2026年1月調査ではCursorの業務利用率は18%とされる。<span class="source-tag source-estimate">推定・一般論（二次情報、一次URLは未取得）</span></li>
+<li>「1画面で複数のエージェントを並行管理できる」UIは、Claude CodeやOpenAI Codexのようなターミナル中心のエージェントに対するCursor側の差別化ポイントとして、2026年4月のCursor 3.0で導入された。<span class="source-tag source-official">公式</span>（cursor.com/changelog/3-0）</li>
+</ul>
+<hr />
+<h2>📌 STEP 5 の結論</h2>
+<blockquote>
+<p><strong>Cursorのエージェント機能は「複数ファイル横断編集の自動化」と「複数エージェントの並行管理」の2点で差別化を図っている、というのが業界的な位置づけです。</strong></p>
+</blockquote>
+<h2>---</h2>
+
+<h1>注意点｜Cursorのエージェントモードは万能ではない</h1>
+<hr />
+<blockquote>
+<p>複数エージェントを並走させた後の成果物のすり合わせや、最終的な整合性チェックは人間側で必要になります。並行運用で楽になる部分と、逆に確認の手間が増える部分の両方があるという前提で導入を検討してください。</p>
+</blockquote>
+<h3>導入時のおすすめの進め方</h3>
+<pre><code>1. まず1つの簡単なタスクで、エージェントタブを2〜3個並べて動かしてみる
+2. 拡張機能パネル（Claude Code/Codex等）の並列配置を試し、自分に合う画面構成を見つける
+3. 複数エージェントの成果物を統合する際のチェック手順を決めておく
+4. 高リスクな操作（削除・送信・課金など）は必ず人間が最終確認する
+</code></pre>
+<hr />
+<hr />
+<h2>📌 まとめ</h2>
+<table>
+<thead>
+<tr>
+<th>やりたいこと</th>
+<th>できる方法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cursor自身のエージェントでClaude/Codex系モデルの頭脳を使う</td>
+<td>New Agentのモデル切替（方法1）</td>
+</tr>
+<tr>
+<td>Claude Code/Codex本体を1画面にまとめる</td>
+<td>拡張機能パネルのドラッグ配置（方法2）</td>
+</tr>
+<tr>
+<td>複数エージェントを並行管理する</td>
+<td>Agents Window + Agent Tabs</td>
+</tr>
+<tr>
+<td>速度・コスト重視の作業</td>
+<td>Composerモデル</td>
+</tr>
+<tr>
+<td>設計判断が必要な複雑な作業</td>
+<td>Claude系モデル</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>✅ 導入検討時のチェックリスト</h2>
+<ul>
+<li>[ ] 現在、複数のAIエージェントを別ウィンドウで並行稼働させていないか確認した</li>
+<li>[ ] New Agentのモデル選択と、拡張機能パネル（Claude Code/Codex本体）の違いを理解した</li>
+<li>[ ] エージェントウィンドウ・エージェントタブ・New Agentボタンの関係を理解した</li>
+<li>[ ] タスクの性質に応じてComposer/Claude系を使い分ける方針を決めた</li>
+<li>[ ] 複数エージェントの成果物をすり合わせる確認フローを用意した</li>
+<li>[ ] 高リスク操作（削除・送信・課金）に人間の承認ステップを入れている</li>
+</ul>
+<hr />
+<h2>出典一覧</h2>
+<ul>
+<li><span class="source-tag source-official">公式</span> Cursor Changelog 3.0（Agents Window、Agent Tabs） — https://cursor.com/changelog/3-0</li>
+<li><span class="source-tag source-official">公式</span> Cursor Docs（モデル一覧） — https://cursor.com/docs/models</li>
+<li><span class="source-tag source-official">公式</span> Cursor Blog（Composer 2.5 料金） — https://cursor.com/blog/composer-2-5</li>
+<li><span class="source-tag source-estimate">推定・二次情報</span> Cursor Blog（生産性に関する自社発表） — https://cursor.com/blog/productivity</li>
+<li><span class="source-tag source-estimate">推定・二次情報</span> Composer 2.5に関する分析記事 — https://artificialanalysis.ai/articles/cursor-composer-2-5-coding-agent-index</li>
+<li><span class="source-tag source-estimate">推定・二次情報</span> 拡張機能パネルの並列配置の実例紹介記事 — https://www.productmap.io/blog/agentic-product-management-cursor-codex-gemini</li>
+<li><span class="source-tag source-forum">フォーラム</span> Cursor公式フォーラム（エージェントUIに関する質問・議論） — forum.cursor.com</li>
+</ul>
+<hr />
+<p><em>このドキュメントはCursorのエージェントモードに関する一般的な整理です。Cursorの機能・仕様は更新が早いため、実際に利用する際は公式ドキュメント・changelogで最新情報を確認してください。</em></p></div></div>
+<div class="footer">
+  <p>AIエージェント活用ドキュメント v4.1 | 2026年版</p>
+</div>
+<script>
+var literacyQuestions = [
+  {
+    "q": "Q. 公共のWi-Fiにつなぐ前に、まず何を確認しますか？",
+    "a": "A. お店や施設が案内している正しいWi-Fi名かを確認します。似た名前が複数ある時は接続しない方が安全です。"
+  },
+  {
+    "q": "Q. カフェや空港のWi-Fiで、仕事のログインをしてもよいですか？",
+    "a": "A. できれば避けます。必要な時は正しいWi-Fi名を確認し、VPNを使い、重要なIDやパスワード入力は慎重に行います。"
+  },
+  {
+    "q": "Q. 「自動的に接続する」をオンにしたままだと何が危ないですか？",
+    "a": "A. 以前使ったWi-Fiと同じ名前の偽物に、気づかないまま接続する可能性があります。外出先ではオフがおすすめです。"
+  },
+  {
+    "q": "Q. 多要素認証とは何ですか？",
+    "a": "A. パスワードだけでなく、SMS、認証アプリ、指紋など、別の確認も使ってログインを守る仕組みです。"
+  },
+  {
+    "q": "Q. 多要素認証を入れていれば、完全に安全ですか？",
+    "a": "A. 完全ではありません。パソコン自体を乗っ取られたり、偽サイトに入力したりすると危険が残ります。"
+  },
+  {
+    "q": "Q. パスワードを使い回すと何が危ないですか？",
+    "a": "A. 1つのサービスから漏れたパスワードで、他のサービスにもログインされる可能性があります。"
+  },
+  {
+    "q": "Q. パスワード管理アプリを使うメリットは何ですか？",
+    "a": "A. 長くてサービスごとに違うパスワードを覚えずに使えます。偽サイトに気づく助けにもなります。"
+  },
+  {
+    "q": "Q. メールのリンクを開く前に何を見ますか？",
+    "a": "A. 送信元、リンク先のURL、急がせる言葉がないかを見ます。不安ならメール内リンクではなく公式サイトから開きます。"
+  },
+  {
+    "q": "Q. 「今日中に対応しないと停止します」というメールはどう扱いますか？",
+    "a": "A. 急がせるメールは詐欺でよく使われます。すぐクリックせず、公式サイトや担当者に別経路で確認します。"
+  },
+  {
+    "q": "Q. 共有アカウントはなぜ避けた方がよいですか？",
+    "a": "A. 誰が操作したか分からなくなります。退職者や外注先のアクセス停止も漏れやすくなります。"
+  },
+  {
+    "q": "Q. 「必要な人だけに権限を渡す」とはどういう意味ですか？",
+    "a": "A. 全員に管理者権限を渡さず、仕事に必要な範囲だけ見られる・操作できるようにすることです。"
+  },
+  {
+    "q": "Q. 退職者や外注先のアカウントで確認すべきことは何ですか？",
+    "a": "A. メール、クラウド、GitHub、SNS、業務ツールにまだ入れないかを確認し、不要な権限を止めます。"
+  },
+  {
+    "q": "Q. AIに入力してよい情報か迷った時はどうしますか？",
+    "a": "A. 顧客名、個人情報、契約内容、パスワード、APIキーが含まれていないか確認します。迷うものは入れません。"
+  },
+  {
+    "q": "Q. AIに送ってはいけない代表例は何ですか？",
+    "a": "A. パスワード、APIキー、顧客の個人情報、未公開の契約内容、社外秘の資料です。"
+  },
+  {
+    "q": "Q. APIキーとは何ですか？",
+    "a": "A. システム同士がサービスを使うための鍵のような文字列です。漏れると勝手に使われる可能性があります。"
+  },
+  {
+    "q": "Q. .envファイルには何が入っていることが多いですか？",
+    "a": "A. APIキー、データベース接続情報、秘密の設定などが入っていることがあります。AIやGitに不用意に見せないようにします。"
+  },
+  {
+    "q": "Q. GitHubにパスワードやAPIキーを上げてしまったら何をしますか？",
+    "a": "A. すぐ削除するだけでなく、そのキーを無効化して新しいものに作り直します。履歴に残るためです。"
+  },
+  {
+    "q": "Q. 公共のUSB充電ポートを使う時の安全策は何ですか？",
+    "a": "A. ACアダプタ、モバイルバッテリー、充電専用ケーブルを使います。知らないUSBポートへ直接つながない方が安全です。"
+  },
+  {
+    "q": "Q. QRコードを読み取る時に気をつけることは何ですか？",
+    "a": "A. 開いた先のURLが本物か確認します。店頭やチラシのQRコードが貼り替えられている可能性もあります。"
+  },
+  {
+    "q": "Q. パソコンを置いたまま席を離れる時にすることは何ですか？",
+    "a": "A. 画面ロックをします。短時間でも、のぞき見や勝手な操作を防ぐ基本です。"
+  },
+  {
+    "q": "Q. パソコンをなくした時に備えて有効な対策は何ですか？",
+    "a": "A. 画面ロック、ディスク暗号化、リモートワイプ、クラウド側でのログアウトや権限停止です。"
+  },
+  {
+    "q": "Q. バックアップは作るだけで十分ですか？",
+    "a": "A. 十分ではありません。実際に復元できるかをテストしておくことが大切です。"
+  },
+  {
+    "q": "Q. ランサムウェアとは何ですか？",
+    "a": "A. ファイルを勝手に暗号化して、元に戻すためにお金を要求する攻撃です。バックアップと復旧手順が重要です。"
+  },
+  {
+    "q": "Q. ログとは何ですか？",
+    "a": "A. 誰が、いつ、何をしたかの記録です。問題が起きた時に原因や影響範囲を調べる手がかりになります。"
+  },
+  {
+    "q": "Q. ログを残す時に見るべき基本は何ですか？",
+    "a": "A. 誰が、いつ、どこから、何を見たか、何を変更したかです。"
+  },
+  {
+    "q": "Q. 使っていない外部サービス連携はどうしますか？",
+    "a": "A. 削除します。使っていない連携が残ると、そこから情報にアクセスされる可能性があります。"
+  },
+  {
+    "q": "Q. ブラウザに保存されたパスワードだけに頼ってよいですか？",
+    "a": "A. 便利ですが、端末を乗っ取られた時の影響があります。端末ロック、多要素認証、パスワード管理アプリも検討します。"
+  },
+  {
+    "q": "Q. セキュリティで「まず確認するとよい5つの質問」は何ですか？",
+    "a": "A. 誰が、何を、どこから、どの権限で、ログは残るか、です。打ち合わせでも使いやすい確認です。"
+  },
+  {
+    "q": "Q. セキュリティ事故かもしれないと思ったら最初に何をしますか？",
+    "a": "A. 勝手に削除や初期化をせず、関係者に連絡し、画面や時刻など分かる情報を残します。"
+  },
+  {
+    "q": "Q. セキュリティ対策で一番大事な姿勢は何ですか？",
+    "a": "A. 完璧を目指すより、重要な情報、入口、権限、ログを順番に確認し、危ないところから減らすことです。"
+  }
+];
+
+document.addEventListener('DOMContentLoaded', function() {
+  var quiz = literacyQuestions[Math.floor(Math.random() * literacyQuestions.length)];
+  var questionEl = document.getElementById('quizQuestion');
+  var answerEl = document.getElementById('quizAnswer');
+  var buttonEl = document.getElementById('quizAnswerButton');
+  var nextButtonEl = document.getElementById('quizNextButton');
+  var currentQuizIndex = -1;
+  function pickQuiz() {
+    if (!literacyQuestions.length) return null;
+    if (literacyQuestions.length === 1) {
+      currentQuizIndex = 0;
+      return literacyQuestions[0];
+    }
+    var nextIndex = currentQuizIndex;
+    while (nextIndex === currentQuizIndex) {
+      nextIndex = Math.floor(Math.random() * literacyQuestions.length);
+    }
+    currentQuizIndex = nextIndex;
+    return literacyQuestions[currentQuizIndex];
+  }
+  function renderQuiz() {
+    quiz = pickQuiz();
+    if (!quiz) return;
+    questionEl.textContent = quiz.q;
+    answerEl.innerHTML = '<strong>答え：</strong>' + quiz.a.replace(/^A. /, '');
+    answerEl.style.display = 'none';
+    buttonEl.textContent = '答えを表示';
+  }
+  if (questionEl && answerEl && buttonEl && quiz) {
+    renderQuiz();
+    buttonEl.addEventListener('click', function() {
+      var isOpen = answerEl.style.display === 'block';
+      answerEl.style.display = isOpen ? 'none' : 'block';
+      buttonEl.textContent = isOpen ? '答えを表示' : '答えを隠す';
+    });
+    if (nextButtonEl) {
+      nextButtonEl.addEventListener('click', renderQuiz);
+    }
+  }
+
+  document.querySelectorAll('h2').forEach(function(h) {
+    if (h.textContent.includes('結論')) {
+      h.style.background = 'linear-gradient(to right, #e8f5e9, transparent)';
+      h.style.borderLeftColor = '#43a047';
+      h.style.color = '#2e7d32';
+    }
+  });
+});
+</script>
+</body>
+</html>
